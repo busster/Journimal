@@ -1,0 +1,14 @@
+{
+  "functions": {
+    "predeploy": "npm run build",
+    "source": "."
+  },
+  "hosting": {
+    "rewrites": [
+      {
+        "source": "**",
+        "function": "api"
+      }
+    ]
+  }
+}

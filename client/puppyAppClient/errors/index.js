@@ -1,0 +1,1 @@
+export const ErrorOccurred = new Error('Error occurred.')
