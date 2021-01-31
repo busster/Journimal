@@ -17,11 +17,11 @@ const urls = {
 //     return await res.json()
 // }
 
-export const createPack = async ({ name }) => {
+export const createPack = async ({ name, dogs }) => {
   const res = await httpBuilderFactory
       .createPostBuilder()
       .withUrl(urls.createPack)
-      .send({ name })
+      .send({ name, dogs })
     if (!res.ok) throw ErrorOccurred
-    return await res.json()
+    return await res.text()
 }

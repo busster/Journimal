@@ -27,10 +27,7 @@ export const createUserMachine = Machine({
     create: {
       invoke: {
         id: 'createUserService',
-        src: (context, event) => {
-          console.log('create user service', event)
-          return createUser({ name: event.name })
-        },
+        src: (context, event) => createUser({ name: event.name }),
         onDone: 'created',
         onError: 'collectData'
       }
@@ -60,7 +57,7 @@ export const createPackMachine = Machine({
     create: {
       invoke: {
         id: 'createPackService',
-        src: (context, event) => createPack({ name: event.name, dogs: event.dogs }),
+        src: (context, event) => createPack({ name: event.name, dogs: context.dogs }),
         onDone: 'created',
         onError: 'collectData'
       }
@@ -73,6 +70,9 @@ export const createPackMachine = Machine({
 
 export const createDogsMachine = Machine({
   id: 'createPack',
+  context: {
+    dogs: []
+  },
   initial: 'collectData',
   states: {
     collectData: {
@@ -83,14 +83,24 @@ export const createDogsMachine = Machine({
     create: {
       invoke: {
         id: 'createDogsService',
-        src: (context, event) => Promise.all(event.dogs.map(dog => createDog({ name: dog.name }))),
-        onDone: 'created',
+        src: (context, event) => Promise.all(event.dogs.map(name => createDog({ name }))),
+        onDone: {
+          target: 'created',
+          actions: 'setDogs'
+        },
         onError: 'collectData'
       }
     },
     created: {
-      type: 'final'
+      type: 'final',
+      data: {
+        dogs: (context, event) => context.dogs
+      }
     }
+  }
+}, {
+  actions: {
+    setDogs: assign({ dogs: (context, event) => event.data.map(dog => dog.replace(/.*\/dogs\//, '')) })
   }
 })
 

@@ -12,7 +12,7 @@ import {
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators';
 
-import { signupWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, logOut } from '../data'
+import { signupWithEmailAndPassword, signInWithEmailAndPassword, authStateOberver, logOut } from '../data'
 
 export const authenticationMachine = Machine({
   id: 'authentication',
@@ -23,13 +23,7 @@ export const authenticationMachine = Machine({
   states: {
     unauthenticated: {
       invoke: {
-        src: (context, event) => onAuthStateChanged((data) => {
-          if (data) {
-            console.log('user logged in: ', data)
-            return { type: 'ALREADY_LOGGED_IN', data }  
-          }
-          return { type: 'NOT_LOGGED_IN' }
-        })
+        src: (context, event) => authStateOberver
       },
       on: {
         LOGIN: 'loginService',
@@ -98,8 +92,7 @@ export const authenticationMachine = Machine({
   actions: {
     // authComplete: sendParent(context => ({ type: 'AUTH_COMPLETE', data: context.authUser}) ),
     setUser: assign({ authUser: (context, event) => {
-      console.log(event)
-      return event.data
+      return event.data.uid ? event.data : event.data.user
     } }),
     // loggedOut: sendParent('AUTH_INVALIDATED')
   }
