@@ -23,5 +23,5 @@ export const createDog = async ({ name }) => {
       .withUrl(urls.createDog)
       .send({ name })
     if (!res.ok) throw ErrorOccurred
-    return await res.json()
+    return await res.text()
 }

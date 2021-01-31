@@ -83,7 +83,7 @@ export const appMachine = Machine({
 export const appService = interpret(appMachine)
 
 appService.onTransition(state => {
-  console.log(state.value)
+  console.log(`\nstate: ${state.value},\ncontext: ${JSON.stringify(state.context, undefined, 2)}`)
   // if (state.children.authenticationMachine) {
   //   state.children.authenticationMachine.onTransition(s => {
   //     console.log(s.value)

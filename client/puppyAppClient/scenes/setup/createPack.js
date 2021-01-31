@@ -1,27 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { StyleSheet, SafeAreaView, Text, View, TextInput, TouchableOpacity } from 'react-native';
 
 import { useService } from '@xstate/react';
 import { appService } from '../../machines/app'
 
-import CreateUserScene from './createUser'
-import CreateDogsScene from './createDogs'
-import CreatePackScene from './createPack'
+export default ({ service }) => {
+  const [name, setName] = useState('')
+  const [state, send] = useService(service)
 
-export default ({ navigation }) => {
-  const [state, send] = useService(appService)
-  const [setupState, setupSend] = useService(state.children.setupAccountMachine)
-
-  if (setupState.matches('createUser')) {
-    return (<CreateUserScene service={setupState.children.createUserMachine} />)
-  } else if (setupState.matches('createDogs')) {
-    return (<CreateDogsScene service={setupState.children.createDogsMachine} />)
-  } else if (setupState.matches('createPack')) {
-    return (<CreatePackScene service={setupState.children.createPackMachine} />)
-  } else {
-    return (<View style={styles.container}></View>)
+  const createPack = () => {
+    send('CREATE', { name })    
   }
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.logo}>Setup User</Text>
+      <View style={styles.inputView} >
+        <TextInput
+          style={styles.inputText}
+          placeholder="Pack Name" 
+          placeholderTextColor="#003f5c"
+          onChangeText={setName}/>
+      </View>
+      <TouchableOpacity style={styles.loginBtn} onPress={createPack}>
+        <Text style={styles.loginText}>Save</Text>
+      </TouchableOpacity>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
