@@ -41,4 +41,4 @@ class CreateDogCommandHandler extends cqrs_1.CommandHandler {
     }
 }
 exports.CreateDogCommandHandler = CreateDogCommandHandler;
-//# sourceMappingURL=getDogByIdQuery.js.map
+//# sourceMappingURL=createEventCommand.js.map
