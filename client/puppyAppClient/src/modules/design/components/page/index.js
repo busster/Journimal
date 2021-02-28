@@ -1,14 +1,15 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React from 'react'
+import { View, StyleSheet } from 'react-native'
 import { Colors } from 'modules/design/styles'
 
-import { Neomorph } from 'react-native-neomorph-shadows'
+import { styleIfTrue } from 'modules/design/components/utils'
 
-export const Page = ({ style, children, centerX }) => (
+export const Page = ({ style, children, centerX, centerY }) => (
   <View style={{
       ...style,
       ...styles.page,
-      ...(centerX ? styles['page--centerX'] : ({}))
+      ...styleIfTrue(centerX, styles['page--centerX']),
+      ...styleIfTrue(centerY, styles['page--centerY']),
     }}
   >
     { children }
@@ -22,5 +23,8 @@ const styles = StyleSheet.create({
   },
   'page--centerX': {
     alignItems: 'center'
+  },
+  'page--centerY': {
+    justifyContent: 'center'
   }
 })
