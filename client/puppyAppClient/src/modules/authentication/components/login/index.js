@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { Page, TextInput, Link, Colors, TextColors, LogoIcon, Spacing, Typography, wpw } from 'modules/design'
+import { Page, TextInput, Link, Button, Colors, TextColors, LogoIcon, Spacing, Typography, wpw } from 'modules/design'
 
 // import { useService } from '@xstate/react';
 // import { appService } from '../../machines/app'
@@ -30,12 +30,17 @@ export default ({ navigation }) => {
   return (
     <Page centerX centerY style={styles.loginPage}>
       <LogoIcon width={logoSize} height={logoSize} />
+      
       <Text style={[styles.title, Spacing.mt1]}>Journimal</Text>
+      
       <TextInput style={Spacing.mt2} onChangeText={setEmail} placeholder="Email" width={inputWidth}/>
       <TextInput style={Spacing.mt1} onChangeText={setPassword} password placeholder="Password" width={inputWidth}/>
+      
       <View style={{ ...styles.forgotPassword, width: inputWidth }}>
         <Link onPress={gotToPasswordReset} style={[Spacing.mt05]} variation="light" text="Forgot Password?"/>
       </View>
+
+      <Button style={Spacing.mt1} text="Sign In" width={inputWidth}/>
 
       <View style={[styles.signup, Spacing.mt1]}>
         <Text style={styles.signupText}>Don't have an account?</Text>
