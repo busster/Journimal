@@ -44,10 +44,7 @@ export const authenticationMachine = Machine({
       on: {
         LOGIN: 'loginService',
         SIGNUP_WITH_EMAIL_AND_PASSWORD: 'signupService',
-        ALREADY_LOGGED_IN: {
-          target: 'authenticated',
-          actions: 'setUser'
-        },
+        ALREADY_LOGGED_IN: 'authenticated',
         PASSWORD_RESET: 'passwordResetService'
       }
     },
