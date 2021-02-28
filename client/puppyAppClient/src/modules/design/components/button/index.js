@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Colors } from 'modules/design/styles'
 
-// import { ViewStyle, View } from 'react-native';
-import InsetShadow from 'react-native-inset-shadow';
+import { Neomorph } from 'react-native-neomorph-shadows'
 
 export const JButton = ({ onPress, text, style }) => (
   <View>
-    <InsetShadow>
+    {/* <InsetShadow>
       <InsetShadow>
         <TouchableOpacity
           onPress={onPress}
@@ -16,7 +15,7 @@ export const JButton = ({ onPress, text, style }) => (
           <Text style={styles.buttonText}>{text}</Text>
         </TouchableOpacity>
       </InsetShadow>
-    </InsetShadow>
+    </InsetShadow> */}
   </View>
 )
 

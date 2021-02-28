@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, SafeAreaView, Text, View, TextInput, TouchableOpacity } from 'react-native';
 
-import { Colors } from 'modules/design/styles'
-import { JButton } from 'modules/design/components/button'
+import { Colors, Page, LogoIcon, Spacing, Typography, wpw } from 'modules/design'
 
 // import { useService } from '@xstate/react';
 // import { appService } from '../../machines/app'
@@ -21,25 +20,21 @@ export default ({ navigation }) => {
     // navigation.replace('Signup')
   }
 
+  const logoSize = wpw(.4)
+
   return (
-    <View style={styles.container}>
+    <Page centerX style={styles.loginPage}>
+      <LogoIcon style={[Spacing.my1]} width={logoSize} height={logoSize} />
       <Text style={styles.title}>Journimal</Text>
-      <JButton onPress={login} text='Sign In' style={styles.login} />
-    </View>
+
+    </Page>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.Background,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  login: {
-    width: "80%",
-  },
+  loginPage: {},
   title: {
     color: Colors.Accent,
+    ...Typography.title
   }
-});
+})
