@@ -1,7 +1,7 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View, Pressable } from 'react-native';
 
-import { Page, Button, wpw } from 'modules/design'
+import { Page, Button, ProfileIcon, Spacing, wpw } from 'modules/design'
 
 import { useService } from '@xstate/react'
 import { appService } from 'modules/core/machines'
@@ -9,18 +9,27 @@ import { appService } from 'modules/core/machines'
 export default ({ navigation }) => {
   const [state, send] = useService(appService)
 
-  const logout = () => {
-    send('LOGOUT')
+  const routeToProfile = () => {
+    navigation.push('UserRouter')
   }
 
   const inputWidth = wpw(.8)
 
   return (
-    <Page centerX centerY>
-      <Button onPress={logout} width={inputWidth} text="logout"/>
+    <Page centerX>
+      <View style={styles.header}>
+        <Pressable onPress={routeToProfile}>
+          <ProfileIcon style={[Spacing.m1]} width={25} height={25} />
+        </Pressable>
+      </View>
     </Page>
   )
 }
 
 const styles = StyleSheet.create({
+  header: {
+    display: 'flex',
+    alignItems: 'flex-end',
+    width: '100%'
+  },
 })

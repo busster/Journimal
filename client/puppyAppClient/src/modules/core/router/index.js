@@ -7,6 +7,7 @@ import { appService } from 'modules/core/machines'
 
 import { AuthenticationRouter } from 'modules/authentication/router'
 import { HomeRouter } from 'modules/home/router'
+import { UserRouter } from 'modules/user/router'
 
 const Stack = createStackNavigator();
 
@@ -20,6 +21,7 @@ export const Router = (props) => {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="HomeRouter" headerMode="none">
         <Stack.Screen name="HomeRouter" component={HomeRouter} />
+        <Stack.Screen name="UserRouter" component={UserRouter} />
       </Stack.Navigator>
     </NavigationContainer>
   )
