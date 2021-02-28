@@ -13,7 +13,7 @@ const appMachine = Machine({
   initial: 'authenticating',
   context: {
     authUser: null,
-    user: null
+    user: {}
   },
   states: {
     authenticating: {
