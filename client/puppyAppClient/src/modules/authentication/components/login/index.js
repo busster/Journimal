@@ -3,17 +3,17 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { Page, TextInput, Link, Button, Colors, TextColors, LogoIcon, Spacing, Typography, wpw } from 'modules/design'
 
-// import { useService } from '@xstate/react';
-// import { appService } from '../../machines/app'
+import { useService } from '@xstate/react'
+import { appService } from 'modules/core/machines'
 
 export default ({ navigation }) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  // const [state, send] = useService(appService)
+  const [state, send] = useService(appService)
 
   const login = () => {
-    // send('LOGIN', { email, password })
+    send('LOGIN', { email, password })
   }
 
   const gotToPasswordReset = () => {
@@ -40,7 +40,7 @@ export default ({ navigation }) => {
         <Link onPress={gotToPasswordReset} style={[Spacing.mt05]} variation="light" text="Forgot Password?"/>
       </View>
 
-      <Button style={Spacing.mt1} text="Sign In" width={inputWidth}/>
+      <Button onPress={login} style={Spacing.mt1} text="Sign In" width={inputWidth}/>
 
       <View style={[styles.signup, Spacing.mt1]}>
         <Text style={styles.signupText}>Don't have an account?</Text>

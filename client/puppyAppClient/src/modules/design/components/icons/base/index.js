@@ -14,7 +14,7 @@ export const Icon = ({ style, width = "50", height = "50", icon }) => {
     (<SvgUri width={width} height={height} uri={state.context.iconUri} />) :
     (<Svg width={width} height={height} />)
 
-  return (<View style={style}>
+  return (<View style={[style, { width, height }]}>
     { svg }
   </View>)
 }
