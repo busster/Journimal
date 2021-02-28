@@ -4,19 +4,6 @@ import { StyleSheet, SafeAreaView, Text, View, TextInput, TouchableOpacity } fro
 import { useService } from '@xstate/react';
 import { appService } from '../../machines/app'
 
-// import auth from '@react-native-firebase/auth';
-
-
-// auth().onAuthStateChanged((user) => {
-//   if (user) {
-//     user.getIdToken(/* forceRefresh */ true).then(function(idToken) {
-//       console.log('idToken: ', idToken)
-//     }).catch(function(error) {
-//       // Handle error
-//     });
-//   }
-// });
-
 export default ({ navigation }) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')

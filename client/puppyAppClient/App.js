@@ -13,19 +13,12 @@ import {
   StatusBar,
 } from 'react-native';
 
-import { DefaultTheme, DarkTheme } from './styles/themes'
-
-import { Provider as PaperProvider } from 'react-native-paper';
-
-import { Router } from './components/router';
+import { Router } from 'modules/core/router';
 
 export default class App extends React.Component {
   render () {
     return (
-      <PaperProvider theme={DefaultTheme}>
-        <StatusBar barStyle="dark-content" />
-        <Router theme={DefaultTheme} />
-      </PaperProvider>
+      <Router />
     );
   }
 }
