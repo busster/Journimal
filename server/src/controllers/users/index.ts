@@ -20,7 +20,7 @@ export default class UsersController {
     const userId = req.userId
     const { name } = req.body;
     try {
-      console.log('Received request to create user: ', userId, name)
+      // console.log('Received request to create user: ', userId, name)
       const commandId = uuidv4()
       new CreateUserCommandHandler()
         .handle(new CreateUserCommand(commandId, userId, name));
@@ -30,6 +30,7 @@ export default class UsersController {
         res.status(201).send(`/users/${id}`);
       })
     } catch(ex) {
+      console.error(ex)
       res.status(400).send('User params not valid');
     }
   }
@@ -43,6 +44,7 @@ export default class UsersController {
 
       res.status(200).send(user)
     } catch (ex) {
+      console.error(ex)
       res.status(404).send(ex.message)
     }
   }

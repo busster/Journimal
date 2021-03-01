@@ -7,7 +7,7 @@ import { UserDoesNotExist, CouldNotCreateUser } from './errors'
 
 export const createUserService = async (user : User) : Promise<void> => {
   try {
-    console.log('Saving domain user: ', user)
+    // console.log('Saving domain user: ', user)
     await usersCollection
       .doc(user.id)
       .set({

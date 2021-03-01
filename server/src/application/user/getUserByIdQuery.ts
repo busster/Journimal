@@ -18,7 +18,7 @@ export class GetUserByIdQueryHandler extends QueryHandler<GetUserByIdQuery, User
     try {
       return await getUserByIdService(query.id);
     } catch (ex) {
-      throw ex
+      throw(ex)
     }
   }
 }

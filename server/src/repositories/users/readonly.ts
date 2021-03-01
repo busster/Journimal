@@ -1,3 +1,5 @@
+import { Logger }from '../../utils/logger'
+
 import { db } from '../index'
 import { usersCollection, packsCollection, packMembersCollection, dogsCollection, dogOwnersCollection } from '../collections'
 
