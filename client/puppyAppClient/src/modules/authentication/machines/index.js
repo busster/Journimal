@@ -51,7 +51,7 @@ export const authenticationMachine = Machine({
     authenticated: {
       type: 'final',
       data: {
-        authUser: (context, event) => event.data
+        authUser: (context, event) => event.data.uid ? event.data : event.data.user
       }
     },
     signupService: {

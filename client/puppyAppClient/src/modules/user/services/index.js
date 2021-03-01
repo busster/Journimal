@@ -5,7 +5,8 @@ const urls = {
   get: `${appsettings.functionApi}/users/:userId`,
 }
 
-export const get = (userId) =>
-  httpGetBuilder()
-    .withUrl(urls.get.replace(':userId', userId))
-    .send()
+export const get = (userId) => httpGetBuilder()
+  .withSuccessStrategy(res => res)
+  .withFailedStrategy(res => res)
+  .withUrl(urls.get.replace(':userId', userId))
+  .send()

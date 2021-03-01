@@ -8,13 +8,15 @@ import { authenticationMachine } from 'modules/authentication/machines'
 import { identifyUserMachine } from 'modules/user/machines/identify'
 import { logoutService } from 'modules/authentication/machines/logout'
 
+const context = {
+  authUser: null,
+  user: {}
+}
+
 const appMachine = Machine({
   id: 'appMachine',
   initial: 'authenticating',
-  context: {
-    authUser: null,
-    user: {}
-  },
+  context,
   states: {
     authenticating: {
       invoke: {
@@ -56,7 +58,7 @@ const appMachine = Machine({
   actions: {
     setAuthUser: assign({ authUser: (context, event) => event.data.authUser }),
     setIdentifiedUser: assign({ user: (context, event) => event.data.user }),
-    resetContext: assign({ authUser: null, user: null })
+    resetContext: assign({ ...context })
   },
   services: {
     authenticationMachine,

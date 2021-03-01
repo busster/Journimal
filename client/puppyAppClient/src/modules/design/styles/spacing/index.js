@@ -8,6 +8,13 @@ const buildSpacing = (label, size) => ({
   [`mx${label}`]: { marginHorizontal: size },
   [`ml${label}`]: { marginLeft: size },
   [`mr${label}`]: { marginRight: size },
+  [`p${label}`]: { padding: size },
+  [`py${label}`]: { paddingVertical: size },
+  [`pt${label}`]: { paddingTop: size },
+  [`pb${label}`]: { paddingBottom: size },
+  [`px${label}`]: { paddingHorizontal: size },
+  [`pl${label}`]: { paddingLeft: size },
+  [`pr${label}`]: { paddingRight: size },
 })
 
 export const Spacing = StyleSheet.create({

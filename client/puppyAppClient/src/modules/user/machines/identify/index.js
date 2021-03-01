@@ -13,14 +13,38 @@ export const identifyUserMachine = Machine({
       invoke: {
         id: 'fetchUserService',
         src: (context, event) => get(context.uid),
-        onDone: 'identified',
+        onDone: {
+          target: 'verify',
+          actions: ['setUser']
+        },
       }
+    },
+    verify: {
+      always: [
+        { target: 'identified', cond: 'validUser' },
+        { target: 'identifying' }
+      ]
     },
     identified: {
       type: 'final',
       data: {
-        user: (context, event) => event.data
+        user: (context, event) => context.user
       }
     }
+  }
+},
+{
+  actions: {
+    setUser: assign({
+      status: (context, event) => event.data.status,
+      user: (context, event) => event.data.data
+    })
+  },
+  guards: {
+    validUser: (context, event) => {
+      console.log(context)
+      return context.status === 200
+    },
+
   }
 })
