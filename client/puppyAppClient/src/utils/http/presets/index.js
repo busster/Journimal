@@ -11,3 +11,7 @@ export const generateDefaultHttpBuilder = () =>
 export const httpGetBuilder = () =>
   generateDefaultHttpBuilder()
     .asGet()
+
+export const httpPostBuilder = () =>
+  generateDefaultHttpBuilder()
+    .asPost()
