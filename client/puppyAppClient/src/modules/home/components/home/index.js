@@ -17,9 +17,15 @@ export default ({ navigation }) => {
     navigation.push('UserRouter')
   }
 
-  const handlePressDog = (dogId) => {}
+  const handlePressDog = (dog) => {
+    send('GO_TO_DOG', { dog })
+    navigation.push('DogRouter')
+  }
 
-  const handlePressPack = (packId) => {}
+  const handlePressPack = (pack) => {
+    send('GO_TO_PACK', { pack })
+    navigation.push('PackRouter')
+  }
 
   const headerRight = (
     <Pressable onPress={routeToProfile}>
@@ -27,47 +33,41 @@ export default ({ navigation }) => {
     </Pressable>
   )
 
+  const getStylesForTile = (index, start, end) => {
+    if (index === start) {
+      return {...Spacing.pr05, ...Spacing.pl1}
+    } else if (index === end) {
+      return {...Spacing.pl05, ...Spacing.pr1}
+    } else {
+      return {...Spacing.px05}
+    }
+  }
+
   return (
     <PageNamed centerX headerRight={headerRight}>
       <View style={styles['scroll-container']}>
         <Text style={styles['tile__title']}>Dogs</Text>
         <ScrollView horizontal={true} alwaysBounceHorizontal={true} showsHorizontalScrollIndicator={false}>
-          {
-            dogs.map((dog, index) => {
-              let s = {...Spacing.px05}
-              if (index === 0) {
-                s = {...Spacing.pr05, ...Spacing.pl1}
-              } else if (index === dogs.length - 1) {
-                s = {...Spacing.pl05, ...Spacing.pr1}
-              }
+          {dogs.map((dog, index) => {
               return (
-                <Pressable key={dog.id} onPress={() => handlePressDog(dog.id)}>
-                  <Tile style={s} title={dog.name} />
+                <Pressable key={dog.id} onPress={() => handlePressDog(dog)}>
+                  <Tile style={getStylesForTile(index, 0, dogs.length - 1)} title={dog.name} />
                 </Pressable>
               )
-            })
-          }
+            })}
         </ScrollView>
       </View>
 
       <View style={styles['scroll-container']}>
         <Text style={styles['tile__title']}>Packs</Text>
         <ScrollView horizontal={true} alwaysBounceHorizontal={true} showsHorizontalScrollIndicator={false}>
-        {
-          packs.map((pack, index) => {
-            let s = {...Spacing.px05}
-            if (index === 0) {
-              s = {...Spacing.pr05, ...Spacing.pl1}
-            } else if (index === packs.length - 1) {
-              s = {...Spacing.pl05, ...Spacing.pr1}
-            }
+        {packs.map((pack, index) => {
             return (
-              <Pressable key={pack.id} onPress={() => handlePressPack(pack.id)}>
-                <Tile style={s} title={pack.name} />
+              <Pressable key={pack.id} onPress={() => handlePressPack(pack)}>
+                <Tile style={getStylesForTile(index, 0, packs.length - 1)} title={pack.name} />
               </Pressable>
             )
-          })
-        }
+          })}
         </ScrollView>
       </View>
     </PageNamed>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, StatusBar } from 'react-native';
 
 import { Page, TextInput, Link, Button, Colors, TextColors, LogoIcon, Spacing, Typography, wpw } from 'modules/design'
 
@@ -7,6 +7,8 @@ import { useService } from '@xstate/react'
 import { appService } from 'modules/core/machines'
 
 export default ({ navigation }) => {
+  StatusBar.setBackgroundColor(Colors.Background)
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 

@@ -10,6 +10,8 @@ import Splash from 'modules/core/components/splash'
 import { AuthenticationRouter } from 'modules/authentication/router'
 import { HomeRouter } from 'modules/home/router'
 import { UserRouter } from 'modules/user/router'
+import { DogRouter } from 'modules/dog/router'
+import { PackRouter } from 'modules/pack/router'
 
 const Stack = createStackNavigator();
 
@@ -26,6 +28,8 @@ export const Router = (props) => {
         <Stack.Navigator initialRouteName="HomeRouter" headerMode="none">
           <Stack.Screen name="HomeRouter" component={HomeRouter} />
           <Stack.Screen name="UserRouter" component={UserRouter} />
+          <Stack.Screen name="DogRouter" component={DogRouter} />
+          <Stack.Screen name="PackRouter" component={PackRouter} />
         </Stack.Navigator>
       </NavigationContainer>
     )
