@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Pressable, ScrollView, Text } from 'react-native';
 
-import { Page, Button, ProfileIcon, Spacing, wpw } from 'modules/design'
+import { PageNamed, Button, ProfileIcon, Tile, Spacing, Colors, Typography, wpw } from 'modules/design'
 
 import { useService } from '@xstate/react'
 import { appService } from 'modules/core/machines'
@@ -9,65 +9,82 @@ import { appService } from 'modules/core/machines'
 export default ({ navigation }) => {
   const [state, send] = useService(appService)
 
+  const dogs = state.context.user.dogs
+
+  const packs = state.context.user.packs
+
   const routeToProfile = () => {
     navigation.push('UserRouter')
   }
 
-  const inputWidth = wpw(.8)
+  const handlePressDog = (dogId) => {}
+
+  const handlePressPack = (packId) => {}
+
+  const headerRight = (
+    <Pressable onPress={routeToProfile}>
+      <ProfileIcon width={25} height={25} />
+    </Pressable>
+  )
 
   return (
-    <Page centerX>
-      <View style={styles.header}>
-        <Pressable onPress={routeToProfile}>
-          <ProfileIcon style={[Spacing.m1]} width={25} height={25} />
-        </Pressable>
-      </View>
-      <View style={{ width: "100%"}}>
-        <Text style={{color: '#fff', fontWeight: 'bold', fontSize: 25, ...Spacing.m1}}>Dogs</Text>
+    <PageNamed centerX headerRight={headerRight}>
+      <View style={styles['scroll-container']}>
+        <Text style={styles['tile__title']}>Dogs</Text>
         <ScrollView horizontal={true} alwaysBounceHorizontal={true} showsHorizontalScrollIndicator={false}>
-          <View style={{display: 'flex', ...Spacing.pr05, ...Spacing.pl1}}>
-            <View style={{width: 150, height: 150, backgroundColor: '#fff', borderRadius: 5}}></View>
-            <Text style={{color: '#fff', fontSize:15, ...Spacing.mt025}}>Slater</Text>
-          </View>
-
-          <View style={{display: 'flex', ...Spacing.px05}}>
-            <View style={{width: 150, height: 150, backgroundColor: '#fff', borderRadius: 5}}></View>
-            <Text style={{color: '#fff', fontSize:15, ...Spacing.mt025}}>Slater</Text>
-          </View>
-
-          <View style={{display: 'flex', ...Spacing.pl05, ...Spacing.pr1}}>
-            <View style={{width: 150, height: 150, backgroundColor: '#fff', borderRadius: 5}}></View>
-            <Text style={{color: '#fff', fontSize:15, ...Spacing.mt025}}>Slater</Text>
-          </View>
-
+          {
+            dogs.map((dog, index) => {
+              let s = {...Spacing.px05}
+              if (index === 0) {
+                s = {...Spacing.pr05, ...Spacing.pl1}
+              } else if (index === dogs.length - 1) {
+                s = {...Spacing.pl05, ...Spacing.pr1}
+              }
+              return (
+                <Pressable key={dog.id} onPress={() => handlePressDog(dog.id)}>
+                  <Tile style={s} title={dog.name} />
+                </Pressable>
+              )
+            })
+          }
         </ScrollView>
       </View>
 
-      <View style={{ width: "100%"}}>
-        <Text style={{color: '#fff', fontWeight: 'bold', fontSize: 25, ...Spacing.m1}}>Packs</Text>
+      <View style={styles['scroll-container']}>
+        <Text style={styles['tile__title']}>Packs</Text>
         <ScrollView horizontal={true} alwaysBounceHorizontal={true} showsHorizontalScrollIndicator={false}>
-          <View style={{display: 'flex', ...Spacing.pr05, ...Spacing.pl1}}>
-            <View style={{width: 150, height: 150, backgroundColor: '#fff', borderRadius: 5}}></View>
-            <Text style={{color: '#fff', fontSize:15, ...Spacing.mt025}}>Busster</Text>
-          </View>
-
-          <View style={{display: 'flex', ...Spacing.px05}}>
-            <View style={{width: 150, height: 150, backgroundColor: '#fff', borderRadius: 5}}></View>
-            <Text style={{color: '#fff', fontSize:15, ...Spacing.mt025}}>Busster</Text>
-          </View>
-
-          <View style={{display: 'flex', ...Spacing.pl05, ...Spacing.pr1}}>
-            <View style={{width: 150, height: 150, backgroundColor: '#fff', borderRadius: 5}}></View>
-            <Text style={{color: '#fff', fontSize:15, ...Spacing.mt025}}>Busster</Text>
-          </View>
-
+        {
+          packs.map((pack, index) => {
+            let s = {...Spacing.px05}
+            if (index === 0) {
+              s = {...Spacing.pr05, ...Spacing.pl1}
+            } else if (index === packs.length - 1) {
+              s = {...Spacing.pl05, ...Spacing.pr1}
+            }
+            return (
+              <Pressable key={pack.id} onPress={() => handlePressPack(pack.id)}>
+                <Tile style={s} title={pack.name} />
+              </Pressable>
+            )
+          })
+        }
         </ScrollView>
       </View>
-    </Page>
+    </PageNamed>
   )
 }
 
 const styles = StyleSheet.create({
+  'scroll-container': {
+    width: '100%'
+  },
+  'tile__title': {
+    color: Colors.Accent,
+    fontWeight: 'bold',
+    ...Typography.subTitle,
+    ...Spacing.m1,
+    ...Spacing.mb05
+  },
   header: {
     display: 'flex',
     alignItems: 'flex-end',
