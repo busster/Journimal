@@ -28,7 +28,7 @@ export default ({ navigation }) => {
       <TextInput style={Spacing.mt2} onChangeText={setEmail} placeholder="Email" width={inputWidth}/>
       <TextInput style={Spacing.mt1} onChangeText={setPassword} password placeholder="Password" width={inputWidth}/>
 
-      <Button onPress={signup} style={Spacing.mt1} text="Sign In" width={inputWidth}/>
+      <Button onPress={signup} style={Spacing.mt1} text="Sign Up" width={inputWidth}/>
 
       <View style={[styles.signin, Spacing.mt1]}>
         <Text style={styles.signinText}>Already have an account?</Text>

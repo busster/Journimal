@@ -65,9 +65,9 @@ export const setupUserMachine = Machine({
 },
 {
   actions: {
-    setUserName: assign({ userName: (context, event) => event.name }),
-    setDogNames: assign({ dogNames: (context, event) => event.names }),
-    setPackName: assign({ packName: (context, event) => event.name })
+    setUserName: assign({ userName: (context, event) => event.name.trim() }),
+    setDogNames: assign({ dogNames: (context, event) => event.names.map(name => name.trim()) }),
+    setPackName: assign({ packName: (context, event) => event.name.trim() })
   },
   guards: {}
 })
