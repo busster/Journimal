@@ -26,16 +26,4 @@ auth().onAuthStateChanged((user) => {
   }
 })
 
-// export const onAuthStateChanged = (cb) => Observable.create((observer) => {
-//   auth().onAuthStateChanged((user) => {
-//     console.log('in on auth statechanged ', user)
-//     if (user) {
-//       user.getIdToken(/* forceRefresh */ true).then(function(idToken) {
-//         httpBuilderFactory.token = idToken
-//         observer.next(user)
-//       })
-//     }
-//   })
-// }).pipe(map(cb))
-
 export const logout = () => auth().signOut()

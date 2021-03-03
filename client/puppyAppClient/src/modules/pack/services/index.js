@@ -2,7 +2,7 @@ import appsettings from '@/appsettings'
 import { httpPostBuilder } from '@/utils/http/presets'
 
 const urls = {
-  create: `${appsettings.functionApi}/dogs`,
+  create: `${appsettings.functionApi}/packs`,
 }
 
 export const create = ({ name, dogs }) =>

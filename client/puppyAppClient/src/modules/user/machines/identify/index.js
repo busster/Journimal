@@ -3,9 +3,9 @@ import {
   assign
 } from 'xstate'
 
-import { get, create as createUser } from 'modules/user/services'
-import { create as createDog } from 'modules/dog/services'
-import { create as createPack } from 'modules/pack/services'
+import { get } from 'modules/user/services'
+
+import { setupUserMachine } from 'modules/user/machines/setup'
 
 export const identifyUserMachine = Machine({
   id: 'identifyUser',
@@ -41,49 +41,10 @@ export const identifyUserMachine = Machine({
       }
     },
     setup: {
-      initial: 'createUser',
-      states: {
-        createUser: {
-          on: {
-            CREATE: 'createUserService'
-          }
-        },
-        createUserService: {
-          invoke: {
-            src: (context, event) => createUser({ name: event.name }),
-            onDone: {
-              target: 'createDogs'
-            },
-            onError: 'createUser'
-          }
-        },
-        createDogs: {
-          on: {
-            CREATE: 'createDogsService'
-          }
-        },
-        createDogsService: {
-          invoke: {
-            src: (context, event) => Promise.all(event.dogs.map(name => createDog({ name }))),
-            onDone: {
-              target: 'createPack',
-              actions: ['setDogs']
-            },
-            onError: 'createDogs'
-          }
-        },
-        createPack: {
-          on: {
-            CREATE: 'createDogsService'
-          }
-        },
-        createPackService: {
-          invoke: {
-            src: (context, event) => createPack({ name: event.name, dogs: context.dogs }),
-            onDone: '#identifyUser.identifying',
-            onError: 'createPack'
-          }
-        }
+      invoke: {
+        src: 'setupUserMachine',
+        onDone: 'identifying',
+        autoForward: true
       }
     },
     error: {}
@@ -100,12 +61,14 @@ export const identifyUserMachine = Machine({
       },
       attempt: (context, event) => context.attempt + 1
     }),
-    setDogs: assign({ dogs: (context, event) => event.data.map(dog => dog.replace(/.*\/dogs\//, '')) })
   },
   guards: {
     shortCircuit: (context, event) => context.attemp > 3,
     validUser: (context, event) => context.status === 200,
     apiFailed: (context, event) => context.status === 500 || context.status === 401,
     userNotFound: (context, event) => context.status === 404,
+  },
+  services: {
+    setupUserMachine
   }
 })

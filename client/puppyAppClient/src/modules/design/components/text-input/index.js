@@ -12,6 +12,7 @@ export const TextInput = ({
   placeholder,
   password,
   onChangeText,
+  value,
   disabled,
   width = 50,
   height = 50
@@ -32,6 +33,7 @@ export const TextInput = ({
       }}
     >
       <TInput
+        value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
         editable={editable}

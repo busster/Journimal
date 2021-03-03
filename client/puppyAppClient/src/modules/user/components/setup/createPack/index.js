@@ -10,17 +10,23 @@ export default ({ service }) => {
 
   const [state, send] = useService(service)
 
-  const save = () => {
-    send('CREATE', { name })
-  }
-
   const inputWidth = wpw(.8)
+  const buttonWidth = inputWidth
+
+  const done = () => {
+    if (name.length <= 0) return
+    send('DONE', { name })
+  }
+  const back = () => {
+    send('BACK')
+  }
 
   return (
     <Page centerX centerY>
       <Text style={[styles.title, Spacing.my1, { width: inputWidth }]}>Create Pack</Text>
       <TextInput style={Spacing.mt2} onChangeText={setName} placeholder="Pack Name" width={inputWidth} />
-      <Button onPress={save} text="Done" style={Spacing.my1} width={inputWidth} />
+      <Button onPress={done} text="Done" style={Spacing.my1} width={buttonWidth} />
+      <Link onPress={back} text="Back"/>
     </Page>
   )
 }
