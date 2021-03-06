@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 
-import { Colors, Spacing, Typography } from 'modules/design'
+import { Colors, Spacing, Typography } from 'modules/design/styles'
 
 export const Tile = ({
   title,

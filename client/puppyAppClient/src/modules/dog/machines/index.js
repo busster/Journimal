@@ -11,14 +11,17 @@ import {
 
 const defaultContext = {
   id: null,
-  name: ''
+  name: '',
+  activeView: null
 }
+
+
 
 export const createDogMachine = (id, context = defaultContext) =>
   Machine({
     id,
     context,
-    initial: 'profile',
+    initial: 'timeline',
     states: {
       timeline: {},
       profile: {},

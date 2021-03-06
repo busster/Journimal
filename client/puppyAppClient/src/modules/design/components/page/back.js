@@ -1,7 +1,8 @@
 import React from 'react';
 import { Pressable } from 'react-native';
 
-import { PageNamed, ArrowLeftIcon } from 'modules/design'
+import { PageNamed } from 'modules/design/components/page/named'
+import { ArrowLeftIcon } from 'modules/design/components/icons/arrow-left'
 
 export const PageBack = ({ style, onBack, title, centerX, centerY, headerRight, children }) => {
 

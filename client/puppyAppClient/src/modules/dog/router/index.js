@@ -1,15 +1,16 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import React from 'react'
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 
-import DogProfile from 'modules/dog/components/profile'
+import Timeline from 'modules/dog/components/timeline'
+import Profile from 'modules/dog/components/profile'
 
-const Stack = createStackNavigator();
+const Tab = createMaterialTopTabNavigator()
 
 export const DogRouter = (props) => {
   return (
-    <Stack.Navigator initialRouteName="DogProfile" headerMode="none">
-      <Stack.Screen name="DogProfile" component={DogProfile} />
-    </Stack.Navigator>
+    <Tab.Navigator initialRouteName="DogTimeline" headerMode="none">
+      <Tab.Screen name="DogTimeline" component={Timeline} />
+      <Tab.Screen name="DogProfile" component={Profile} />
+    </Tab.Navigator>
   )
 }

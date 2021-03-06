@@ -1,6 +1,8 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import React from 'react'
+import { NavigationContainer, StackActions } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+
+import { navigationRef } from 'modules/core/router/ref'
 
 import { useService } from '@xstate/react'
 import { appService } from 'modules/core/machines'
@@ -14,7 +16,7 @@ import { UserRouter } from 'modules/user/router'
 import { DogRouter } from 'modules/dog/router'
 import { PackRouter } from 'modules/pack/router'
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator()
 
 appService.start()
 
@@ -27,7 +29,7 @@ export const Router = (props) => {
     return (<SetupRouter />)
   } else if (state.matches('identified')) {
     return (
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
         <Stack.Navigator initialRouteName="HomeRouter" headerMode="none">
           <Stack.Screen name="HomeRouter" component={HomeRouter} />
           <Stack.Screen name="UserRouter" component={UserRouter} />

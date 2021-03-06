@@ -5,6 +5,8 @@ import {
   spawn
 } from 'xstate';
 
+import * as Router from 'modules/core/router/ref'
+
 import { authenticationMachine } from 'modules/authentication/machines'
 import { identifyUserMachine } from 'modules/user/machines/identify'
 import { logoutService } from 'modules/authentication/machines/logout'
@@ -52,10 +54,10 @@ const appMachine = Machine({
     identified: {
       on: {
         GO_TO_DOG: {
-          actions: ['setDogMachineActive']
+          actions: ['setDogMachineActive', 'routeToDog']
         },
         GO_TO_PACK: {
-          actions: ['setPackMachineActive']
+          actions: ['setPackMachineActive', 'routeToPack']
         }
       }
     },
@@ -79,7 +81,9 @@ const appMachine = Machine({
     setAuthUser: assign({ authUser: (context, event) => event.data.authUser }),
     setIdentifiedUser: assign({ user: (context, event) => event.data.user }),
     resetContext: assign({ ...context }),
+    routeToDog: (context, event) => Router.push('DogRouter'),
     setDogMachineActive: assign({ activeMachine: spawnDogMachine }),
+    routeToPack: (context, event) => Router.push('PackRouter'),
     setPackMachineActive: assign({ activeMachine: spawnPackMachine })
   },
   services: {

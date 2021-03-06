@@ -13,7 +13,7 @@ import {
   View
 } from 'react-native';
 
-import { Router } from 'modules/core/router';
+import { Router } from 'modules/core/router'
 
 import { Page, Colors } from 'modules/design'
 

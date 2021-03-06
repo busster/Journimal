@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Text, Pressable } from 'react-native';
 import { Colors, shade } from 'modules/design/styles'
 
-import { Neomorph } from 'react-native-neomorph-shadows'
+import { Neomorph, Shadow } from 'react-native-neomorph-shadows'
 
 import { styleIfTrue } from 'modules/design/components/utils'
 
