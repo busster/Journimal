@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "130342197677",
+    "firebase_url": "https://puppy-time.firebaseio.com",
+    "project_id": "puppy-time",
+    "storage_bucket": "puppy-time.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:130342197677:android:fb17731269fa2aa591e924",
+        "android_client_info": {
+          "package_name": "com.puppyappclient"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "130342197677-r4pral25jt5r8cj9k8ii5g267m43dbs2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.puppyappclient",
+            "certificate_hash": "7d0adc65c35b07176c83744e32207c2caedb69f6"
+          }
+        },
+        {
+          "client_id": "130342197677-upcdapbmrki3ei39he3g7up9kk8jctnp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBOmKMNSgj31FhF7UL4PLqdbGhJIfHOkw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "130342197677-upcdapbmrki3ei39he3g7up9kk8jctnp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
