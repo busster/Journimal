@@ -14,17 +14,24 @@ const defaultContext = {
   name: '',
   activeView: null
 }
-
-
-
 export const createDogMachine = (id, context = defaultContext) =>
   Machine({
     id,
     context,
-    initial: 'timeline',
+    type: 'parallel',
     states: {
-      timeline: {},
+      timeline: {
+        initial: 'view',
+        states: {
+          view: {},
+          addEntry: {}
+        }
+      },
       profile: {},
       scheduler: {}
     }
   })
+
+export const dogMachineName = (id) => `dog-${id}`
+export const spawnDogMachine = (context, { dogId, dog }) =>
+  spawn(createDogMachine(dogMachineName(dogId), dog), { sync: true, name: dogMachineName(dogId) })

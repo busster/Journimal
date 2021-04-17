@@ -18,11 +18,11 @@ export default ({ navigation }) => {
   }
 
   const handlePressDog = (dog) => {
-    send('GO_TO_DOG', { dog })
+    navigation.push('DogRouter', { dogId: dog.id, dog })
   }
 
   const handlePressPack = (pack) => {
-    send('GO_TO_PACK', { pack })
+    navigation.push('PackRouter', { packId: pack.id, pack })
   }
 
   const headerRight = (

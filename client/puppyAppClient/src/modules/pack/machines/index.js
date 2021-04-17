@@ -23,3 +23,7 @@ export const createPackMachine = (id, context = defaultContext) =>
       members: {}
     }
   })
+
+export const packMachineName = (packId) => `pack-${packId}`
+export const spawnPackMachine = (context, { packId, pack }) =>
+  spawn(createPackMachine(packMachineName(packId), pack), { sync: true, name: packMachineName(packId) })

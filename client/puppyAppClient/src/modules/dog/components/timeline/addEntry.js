@@ -8,8 +8,7 @@ import { appService } from 'modules/core/machines'
 
 export default ({ navigation }) => {
   const [state, send] = useService(appService)
-
-  const [dogState, dogSend] = useService(state.context.activeMachine)
+  const [dogState, dogSend] = useService(state.context.activeDogMachine)
 
   const routeToHome = () => {
     navigation.goBack()

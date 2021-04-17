@@ -11,19 +11,21 @@ import { authenticationMachine } from 'modules/authentication/machines'
 import { identifyUserMachine } from 'modules/user/machines/identify'
 import { logoutService } from 'modules/authentication/machines/logout'
 
-import { createDogMachine } from 'modules/dog/machines'
-import { createPackMachine } from 'modules/pack/machines'
+import { spawnDogMachine, dogMachineName } from 'modules/dog/machines'
+import { spawnPackMachine, packMachineName } from 'modules/pack/machines'
 
-const spawnDogMachine = (context, event) =>
-  spawn(createDogMachine(`dog-${event.dog.id}`, event.dog), { sync: true })
-
-const spawnPackMachine = (context, event) =>
-  spawn(createPackMachine(`pack-${event.pack.id}`, event.pack), { sync: true })
+const spawnMachineGenerator = (nameFunc, spawnFunc, nameMap) =>
+  assign({
+    machines: (context, event) => ({
+      ...context.machines,
+      [nameFunc(nameMap(context, event))]: spawnFunc(context, event)
+    })
+  })
 
 const context = {
   authUser: null,
   user: {},
-  activeMachine: null
+  machines: {}
 }
 
 const appMachine = Machine({
@@ -53,11 +55,11 @@ const appMachine = Machine({
     },
     identified: {
       on: {
-        GO_TO_DOG: {
-          actions: ['setDogMachineActive', 'routeToDog']
+        SET_ACTIVE_DOG: {
+          actions: ['spawnAndSetDogMachine']
         },
-        GO_TO_PACK: {
-          actions: ['setPackMachineActive', 'routeToPack']
+        SET_ACTIVE_PACK: {
+          actions: ['spawnAndSetPackMachine']
         }
       }
     },
@@ -81,10 +83,28 @@ const appMachine = Machine({
     setAuthUser: assign({ authUser: (context, event) => event.data.authUser }),
     setIdentifiedUser: assign({ user: (context, event) => event.data.user }),
     resetContext: assign({ ...context }),
-    routeToDog: (context, event) => Router.push('DogRouter'),
-    setDogMachineActive: assign({ activeMachine: spawnDogMachine }),
-    routeToPack: (context, event) => Router.push('PackRouter'),
-    setPackMachineActive: assign({ activeMachine: spawnPackMachine })
+    spawnAndSetDogMachine: assign((context, { dogId, dog }) => {
+      const dogName = dogMachineName(dogId)
+      const dogMachine = spawnDogMachine(context, { dogId, dog })
+      return {
+        machines: {
+          ...context.machines,
+          [dogName]: dogMachine
+        },
+        activeDogMachine: dogMachine
+      }
+    }),
+    spawnAndSetPackMachine: assign((context, { packId, pack }) => {
+      const packName = packMachineName(packId)
+      const packMachine = spawnPackMachine(context, { packId, pack })
+      return {
+        machines: {
+          ...context.machines,
+          [packName]: packMachine
+        },
+        activePackMachine: packMachine
+      }
+    })
   },
   services: {
     authenticationMachine,
@@ -98,5 +118,8 @@ const appMachine = Machine({
 export const appService = interpret(appMachine)
 
 appService.onTransition(state => {
-  console.log(`\nstate: ${state.value},\ncontext: ${JSON.stringify(state.context, undefined, 2)}`)
+  console.log(`
+    \nstate: ${state.value},
+    \ncontext: ${JSON.stringify(state.context, undefined, 2)}
+  `)
 })
