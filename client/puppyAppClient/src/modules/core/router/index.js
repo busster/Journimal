@@ -20,36 +20,8 @@ const Stack = createStackNavigator()
 
 appService.start()
 
-// const pickEvent = (route) => {
-//   switch (route.name) {
-//     case 'DogTimeline':
-//       return 'GO_TO_DOG'
-//     case 'PackProfile':
-//       return 'GO_TO_PACK'
-//     default:
-//       return 'GO_TO_HOME'
-//   }
-// }
-
 export const Router = (props) => {
   const [state, send] = useService(appService)
-
-  // const setupRouterMachineSync = () => {
-  //   const currentRoute = navigationRef.current.getCurrentRoute()
-  //   routeRef.current = currentRoute
-  //   // send(pickEvent(currentRoute), currentRoute.params)
-  //   console.log('================================== SETUP')
-  // }
-
-  // const syncRouterMachine = () => {
-  //   const previousRoute = routeRef.current
-  //   const currentRoute = navigationRef.current.getCurrentRoute()
-
-  //   // send(pickEvent(currentRoute), currentRoute.params)
-  //   console.log('================================= SYNC', previousRoute)
-  //   console.log('================================= SYNC', currentRoute)
-  //   routeRef.current = currentRoute
-  // }
 
   if (state.matches('authenticating')) {
     return (<AuthenticationRouter />)

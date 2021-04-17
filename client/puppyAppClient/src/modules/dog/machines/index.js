@@ -23,8 +23,16 @@ export const createDogMachine = (id, context = defaultContext) =>
       timeline: {
         initial: 'view',
         states: {
-          view: {},
-          addEntry: {}
+          view: {
+            on: {
+              GO_TO_ENTRY_CREATION: 'addEntry'
+            }
+          },
+          addEntry: {
+            on: {
+              CANCEL: 'view'
+            }
+          }
         }
       },
       profile: {},

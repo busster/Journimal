@@ -1,18 +1,29 @@
 import React from 'react';
 import { StyleSheet, View, Text, ScrollView, Pressable } from 'react-native';
 
-import { PageBack, Button, ArrowLeftIcon, Colors, Spacing, Typography, wpw } from 'modules/design'
+import { PageBack, Button, ButtonIcon, Colors, Spacing, SpacingConstants, Typography, ww } from 'modules/design'
 
 import { useService } from '@xstate/react'
 import { appService } from 'modules/core/machines'
 
-export default ({ navigation }) => {
+export default () => {
   const [state, send] = useService(appService)
   const [dogState, dogSend] = useService(state.context.activeDogMachine)
 
+  const buttonSize = (ww() - (SpacingConstants['05'] * 5)) / 5 
+
   const routeToHome = () => {
-    navigation.goBack()
+    dogSend('CANCEL')
   }
+
+  const icons = [
+    // 'mountains',
+    'dog-food',
+    // 'dog-park',
+    'poo',
+    // 'dog-walk',
+    'fire-hydrant'
+  ]
 
   return (
     <PageBack
@@ -20,17 +31,25 @@ export default ({ navigation }) => {
       title={dogState.context.name}
       centerX
     >
-      <ScrollView style={styles.actions}>
-        <Button variation="minimal" text="W" />
-        <Button variation="minimal" text="E" />
-        <Button variation="minimal" text="1" />
-        <Button variation="minimal" text="2" />
+      <ScrollView contentContainerStyle={styles.container} style={styles.actions}>
+        {icons.map(icon => (
+          <ButtonIcon width={buttonSize} height={buttonSize} icon={icon} style={{...Spacing.m05}} />
+        ))}
       </ScrollView>
     </PageBack>
   )
 }
 
 const styles = StyleSheet.create({
+  container: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap'
+  },
+  actions: {
+    width: '100%',
+    ...Spacing.p05
+  }
   // body: {
   //   justifyContent: 'flex-end',
   //   ...Spacing.mb1

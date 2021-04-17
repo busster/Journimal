@@ -1,14 +1,31 @@
-import React from 'react';
-import { StyleSheet, Text } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Image } from 'react-native';
 
 import { Page } from 'modules/design'
 
-export default ({ navigation }) => {
+import { Storage } from '@/utils/storage'
+
+const loadSplashUri = async () => await Storage.loadRefUriFromUrl(`/splash/Digging.gif`)
+
+export default () => {
+  const [splashUri, setSplashUri] = useState(null)
+  useEffect(() => {
+    (async () => {
+      const uri = await Storage.loadRefUriFromUrl(`/splash/Digging.gif`)
+      setSplashUri(uri)
+    })()
+  }, [])
+  console.log(splashUri)
   return (
     <Page centerX centerY>
-      <Text style={{color: '#fff'}}>SPLASH</Text>
+      <Image style={styles.splashImage} source={{ uri: splashUri }} />
     </Page>
   )
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  splashImage: {
+    width: '100%',
+    height: '100%'
+  }
+})

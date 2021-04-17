@@ -17,9 +17,16 @@ const buildSpacing = (label, size) => ({
   [`pr${label}`]: { paddingRight: size },
 })
 
+export const SpacingConstants = {
+  '025': 5,
+  '05': 10,
+  '1': 25,
+  '2': 50
+}
+
 export const Spacing = StyleSheet.create({
-  ...buildSpacing('025', 5),
-  ...buildSpacing('05', 10),
-  ...buildSpacing('1', 25),
-  ...buildSpacing('2', 50)
+  ...Object.keys(SpacingConstants).reduce((acc, n) => {
+    acc = { ...acc, ...buildSpacing(n, SpacingConstants[n]) }
+    return acc
+  }, {})
 })
