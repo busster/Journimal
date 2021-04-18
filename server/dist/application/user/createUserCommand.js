@@ -27,7 +27,7 @@ class CreateUserCommandHandler extends cqrs_1.CommandHandler {
     handle(command) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('Received command to create user: ', command);
+                // console.log('Received command to create user: ', command)
                 const user = new user_1.User(command.userId, command.name, [], []);
                 yield users_1.createUserService(user);
                 bus_1.bus.publish({

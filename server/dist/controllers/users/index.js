@@ -28,7 +28,7 @@ let UsersController = class UsersController {
             const userId = req.userId;
             const { name } = req.body;
             try {
-                console.log('Received request to create user: ', userId, name);
+                // console.log('Received request to create user: ', userId, name)
                 const commandId = uuid_1.v4();
                 new createUserCommand_1.CreateUserCommandHandler()
                     .handle(new createUserCommand_1.CreateUserCommand(commandId, userId, name));
@@ -38,6 +38,7 @@ let UsersController = class UsersController {
                 });
             }
             catch (ex) {
+                console.error(ex);
                 res.status(400).send('User params not valid');
             }
         });
@@ -51,6 +52,7 @@ let UsersController = class UsersController {
                 res.status(200).send(user);
             }
             catch (ex) {
+                console.error(ex);
                 res.status(404).send(ex.message);
             }
         });

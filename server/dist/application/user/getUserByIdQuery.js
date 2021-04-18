@@ -26,7 +26,7 @@ class GetUserByIdQueryHandler extends cqrs_1.QueryHandler {
                 return yield readonly_1.getUserByIdService(query.id);
             }
             catch (ex) {
-                throw ex;
+                throw (ex);
             }
         });
     }

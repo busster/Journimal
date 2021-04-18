@@ -8,24 +8,33 @@
 
 import React from 'react';
 import {
-  SafeAreaView,
   StyleSheet,
   StatusBar,
+  View
 } from 'react-native';
 
-import { DefaultTheme, DarkTheme } from './styles/themes'
+import { Router } from 'modules/core/router'
 
-import { Provider as PaperProvider } from 'react-native-paper';
-
-import { Router } from './components/router';
+import { Page, Colors } from 'modules/design'
 
 export default class App extends React.Component {
   render () {
     return (
-      <PaperProvider theme={DefaultTheme}>
-        <StatusBar barStyle="dark-content" />
-        <Router theme={DefaultTheme} />
-      </PaperProvider>
+      <Page style={styles.appContainer}>
+        <StatusBar
+          barStyle="light-content"
+          hidden={false}
+          backgroundColor={Colors.Background}
+          translucent={true}
+        />
+        <Router />
+      </Page>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  'appContainer': {
+    paddingTop: StatusBar.currentHeight
+  }
+})

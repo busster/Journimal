@@ -15,7 +15,7 @@ const user_1 = require("../../domains/user");
 const errors_1 = require("./errors");
 exports.createUserService = (user) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log('Saving domain user: ', user);
+        // console.log('Saving domain user: ', user)
         yield collections_1.usersCollection
             .doc(user.id)
             .set({
