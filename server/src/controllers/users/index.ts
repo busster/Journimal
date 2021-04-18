@@ -9,6 +9,8 @@ import { CreateUserCommand, CreateUserCommandHandler, userCreatedEvent } from '.
 
 import { GetUserByIdQuery, GetUserByIdQueryHandler } from '../../application/user/getUserByIdQuery'
 
+import { UserDoesNotExist } from '../../repositories/users/errors'
+
 // import { GetUserByIdQueryHandler } from '../../application/queryHandlers/users'
 // import { GetUserByIdQuery } from '../../application/queries/users'
 
@@ -45,7 +47,8 @@ export default class UsersController {
       res.status(200).send(user)
     } catch (ex) {
       console.error(ex)
-      res.status(404).send(ex.message)
+      if (ex === UserDoesNotExist) res.status(404).send(ex.message)
+      else res.status(500).send()
     }
   }
 }
