@@ -1,36 +1,39 @@
-import { Query, QueryHandler } from '../../utils/cqrs'
+import { bus, EventDefinition } from '../../utils/bus'
+import { Command, CommandHandler } from '../../utils/cqrs'
+
+import { createDogService } from '../../repositories/dogs'
 
 import { Dog } from '../../domains/dog'
 
-import { getDogByIdService } from '../../repositories/dogs'
+export const dogCreatedEvent = EventDefinition<{
+  id: string;
+}>()("dog.created");
 
-export class GetDogByIdQuery extends Query {
+export class CreateDogCommand extends Command {
   userId : string;
-  id : string;
+  name : string;
 
-  constructor (userId : string, id : string) {
-    super();
+  constructor (commandId : string, userId : string, name : string) {
+    super(commandId);
     this.userId = userId;
-    this.id = id;
+    this.name = name;
   }
 }
 
-export class GetDogByIdQueryHandler extends QueryHandler<GetDogByIdQuery, Dog> {
-  async handle(query: GetDogByIdQuery): Promise<Dog> {
-    return new Dog('', '', [])
-    // try {
-    //   const dog = await getDogByIdService(query.id);
+export class CreateDogCommandHandler extends CommandHandler<CreateDogCommand> {
+  async handle(command: CreateDogCommand): Promise<void> {
 
-    //   const owner = dog.owners.find((dogOwnerDto : IDogOwnerDto) => dogOwnerDto.ownerId === query.userId)
-    //   if (!owner) throw new Error('User not an owner of this dog')
+    try {
+      const dog = new Dog(null, command.name, [command.userId]);
 
-    //   return {
-    //     id: dog.id,
-    //     name: dog.name,
-    //     owners: dog.owners.map(o => ({ id: o.ownerId }))
-    //   }
-    // } catch (ex) {
-    //   throw ex
-    // }
+      await createDogService(dog);
+
+      bus.publish({
+        type: dogCreatedEvent.eventType + command.id,
+        payload: { id: dog.id }
+      });
+    } catch (ex) {
+      throw ex;
+    }
   }
 }
