@@ -5,6 +5,7 @@ import Router from '../utils/router';
 import UsersController from './users';
 import PacksController from './packs';
 import DogsController from './dogs';
+import TimelinesController from './timelines';
 
 // Middlewares
 import { authorize } from './middlewares/auth';
@@ -15,7 +16,8 @@ const router = Router.getInstance();
 const controllers = [
   UsersController,
   PacksController,
-  DogsController
+  DogsController,
+  TimelinesController
 ]
 
 export const register = (app : any) => {

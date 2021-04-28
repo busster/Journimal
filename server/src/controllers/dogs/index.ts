@@ -6,9 +6,7 @@ import {
 import { bus } from '../../utils/bus'
 
 import { CreateDogCommand, CreateDogCommandHandler, dogCreatedEvent } from '../../application/dog/createDogCommand'
-
-// import { GetDogByIdQueryHandler } from '../../application/queryHandlers/dogs'
-// import { GetDogByIdQuery } from '../../application/queries/dogs'
+import { CreateTimelineCommandHandler, CreateTimelineCommand, timelineCreatedEvent } from '../../application/timeline/createTimelineCommand';
 
 @Controller('/dogs')
 export default class DogsController {
@@ -18,14 +16,20 @@ export default class DogsController {
     const userId = req.userId
     const { name } = req.body;
     try {
-      const commandId = uuidv4()
+      const createDogCommandId = uuidv4();
+      const createTimelineCommandId = uuidv4();
       new CreateDogCommandHandler()
-        .handle(new CreateDogCommand(commandId, userId, name))
+        .handle(new CreateDogCommand(createDogCommandId, userId, name))
 
-        bus.subscribe(dogCreatedEvent.eventType + commandId, event => {
-          const { id } = event.payload;
-          res.status(201).send(`/dogs/${id}`);
-        })
+      bus.subscribe(dogCreatedEvent.eventType + createDogCommandId, event => {
+        const { id } = event.payload;
+        new CreateTimelineCommandHandler()
+          .handle(new CreateTimelineCommand(createTimelineCommandId, id));
+      })
+      bus.subscribe(timelineCreatedEvent.eventType + createTimelineCommandId, event => {
+        const { dogId } = event.payload;
+        res.status(201).send(`/dogs/${dogId}`)
+      })
     } catch(ex) {
       res.status(400).send('Dog params not valid');
     }

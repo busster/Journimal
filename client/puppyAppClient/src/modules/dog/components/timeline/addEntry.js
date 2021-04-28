@@ -16,14 +16,7 @@ export default () => {
     dogSend('CANCEL')
   }
 
-  const icons = [
-    // 'mountains',
-    'dog-food',
-    // 'dog-park',
-    'poo',
-    // 'dog-walk',
-    'fire-hydrant'
-  ]
+  const icons = dogState.context.eventTypes.map(et => et.icon)
 
   return (
     <PageBack

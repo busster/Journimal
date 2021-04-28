@@ -10,6 +10,7 @@ import { paramsRef } from 'modules/core/router/ref'
 import { dogMachineName } from 'modules/dog/machines'
 
 import AddEntry from 'modules/dog/components/timeline/addEntry'
+import Loading from 'modules/dog/components/loading'
 
 export default ({ route, navigation }) => {
   const [state, send] = useService(appService)
@@ -39,6 +40,8 @@ export default ({ route, navigation }) => {
     )
   } else if (dogState.matches('timeline.addEntry')) {
     return <AddEntry />
+  } else {
+    return <Loading />
   }
 }
 

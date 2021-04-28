@@ -10,13 +10,15 @@ const router_1 = __importDefault(require("../utils/router"));
 const users_1 = __importDefault(require("./users"));
 const packs_1 = __importDefault(require("./packs"));
 const dogs_1 = __importDefault(require("./dogs"));
+const timelines_1 = __importDefault(require("./timelines"));
 // Middlewares
 const auth_1 = require("./middlewares/auth");
 const router = router_1.default.getInstance();
 const controllers = [
     users_1.default,
     packs_1.default,
-    dogs_1.default
+    dogs_1.default,
+    timelines_1.default
 ];
 exports.register = (app) => {
     // Middlewares

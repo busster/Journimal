@@ -20,6 +20,7 @@ const controller_1 = require("../../utils/controller");
 const bus_1 = require("../../utils/bus");
 const createUserCommand_1 = require("../../application/user/createUserCommand");
 const getUserByIdQuery_1 = require("../../application/user/getUserByIdQuery");
+const errors_1 = require("../../repositories/users/errors");
 // import { GetUserByIdQueryHandler } from '../../application/queryHandlers/users'
 // import { GetUserByIdQuery } from '../../application/queries/users'
 let UsersController = class UsersController {
@@ -53,7 +54,10 @@ let UsersController = class UsersController {
             }
             catch (ex) {
                 console.error(ex);
-                res.status(404).send(ex.message);
+                if (ex === errors_1.UserDoesNotExist)
+                    res.status(404).send(ex.message);
+                else
+                    res.status(500).send();
             }
         });
     }

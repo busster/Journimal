@@ -9,20 +9,38 @@ import {
   spawn
 } from 'xstate'
 
+import { getTimeline, getEventTypes } from 'modules/dog/services'
+
+const fetchEventTypes = (context, event) => getEventTypes()
+const fetchTimeline = (context, event) => getTimeline(context.id)
+
 const defaultContext = {
   id: null,
   name: '',
-  activeView: null
+  timeline: [],
+  eventTypes: []
 }
-export const createDogMachine = (id, context = defaultContext) =>
+export const createDogMachine = (id, dog) =>
   Machine({
     id,
-    context,
+    context: { ...defaultContext, ...dog },
     type: 'parallel',
     states: {
       timeline: {
-        initial: 'view',
+        initial: 'loadTimeline',
         states: {
+          loadTimeline: {
+            invoke: {
+              id: 'fetch-timeline',
+              src: 'fetchTimeline',
+              onDone: {
+                target: 'view',
+                actions: ['setTimeline']
+              },
+              onError: 'couldNotLoadTimeline'
+            }
+          },
+          couldNotLoadTimeline: {},
           view: {
             on: {
               GO_TO_ENTRY_CREATION: 'addEntry'
@@ -36,7 +54,39 @@ export const createDogMachine = (id, context = defaultContext) =>
         }
       },
       profile: {},
-      scheduler: {}
+      scheduler: {},
+      loader: {
+        initial: 'loadEventTypes',
+        states: {
+          loadEventTypes: {
+            invoke: {
+              id: 'fetch-event-types',
+              src: 'fetchEventTypes',
+              onDone: {
+                target: 'loaded',
+                actions: ['setEventTypes']
+              },
+              onError: 'couldNotLoad'
+            }
+          },
+          loaded: {},
+          couldNotLoad: {}
+        }
+      }
+    }
+  },
+  {
+    services: {
+      fetchEventTypes,
+      fetchTimeline
+    },
+    actions: {
+      setTimeline: assign({
+        timeline: (context, event) => event.data
+      }),
+      setEventTypes: assign({
+        eventTypes: (context, event) => event.data
+      })
     }
   })
 

@@ -9,29 +9,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateDogCommandHandler = exports.CreateDogCommand = exports.dogCreatedEvent = void 0;
+exports.CreateEventCommandHandler = exports.CreateEventCommand = exports.eventCreatedEvent = void 0;
 const bus_1 = require("../../utils/bus");
 const cqrs_1 = require("../../utils/cqrs");
-const dogs_1 = require("../../repositories/dogs");
-const dog_1 = require("../../domains/dog");
-exports.dogCreatedEvent = bus_1.EventDefinition()("dog.created");
-class CreateDogCommand extends cqrs_1.Command {
-    constructor(commandId, userId, name) {
+const events_1 = require("../../repositories/timelines/events");
+const events_2 = require("../../domains/events");
+exports.eventCreatedEvent = bus_1.EventDefinition()("event.created");
+class CreateEventCommand extends cqrs_1.Command {
+    constructor(commandId, timelineId, type, date) {
         super(commandId);
-        this.userId = userId;
-        this.name = name;
+        this.timelineId = timelineId;
+        this.type = type;
+        this.date = date;
     }
 }
-exports.CreateDogCommand = CreateDogCommand;
-class CreateDogCommandHandler extends cqrs_1.CommandHandler {
+exports.CreateEventCommand = CreateEventCommand;
+class CreateEventCommandHandler extends cqrs_1.CommandHandler {
     handle(command) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const dog = new dog_1.Dog(null, command.name, [command.userId]);
-                yield dogs_1.createDogService(dog);
+                const event = new events_2.Event(null, command.type, command.date);
+                yield events_1.createEventService(command.timelineId, event);
                 bus_1.bus.publish({
-                    type: exports.dogCreatedEvent.eventType + command.id,
-                    payload: { id: dog.id }
+                    type: exports.eventCreatedEvent.eventType + command.id,
+                    payload: { eventId: event.id }
                 });
             }
             catch (ex) {
@@ -40,5 +41,5 @@ class CreateDogCommandHandler extends cqrs_1.CommandHandler {
         });
     }
 }
-exports.CreateDogCommandHandler = CreateDogCommandHandler;
+exports.CreateEventCommandHandler = CreateEventCommandHandler;
 //# sourceMappingURL=createEventCommand.js.map

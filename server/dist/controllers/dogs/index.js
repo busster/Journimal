@@ -19,20 +19,25 @@ const uuid_1 = require("uuid");
 const controller_1 = require("../../utils/controller");
 const bus_1 = require("../../utils/bus");
 const createDogCommand_1 = require("../../application/dog/createDogCommand");
-// import { GetDogByIdQueryHandler } from '../../application/queryHandlers/dogs'
-// import { GetDogByIdQuery } from '../../application/queries/dogs'
+const createTimelineCommand_1 = require("../../application/timeline/createTimelineCommand");
 let DogsController = class DogsController {
     create(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const userId = req.userId;
             const { name } = req.body;
             try {
-                const commandId = uuid_1.v4();
+                const createDogCommandId = uuid_1.v4();
+                const createTimelineCommandId = uuid_1.v4();
                 new createDogCommand_1.CreateDogCommandHandler()
-                    .handle(new createDogCommand_1.CreateDogCommand(commandId, userId, name));
-                bus_1.bus.subscribe(createDogCommand_1.dogCreatedEvent.eventType + commandId, event => {
+                    .handle(new createDogCommand_1.CreateDogCommand(createDogCommandId, userId, name));
+                bus_1.bus.subscribe(createDogCommand_1.dogCreatedEvent.eventType + createDogCommandId, event => {
                     const { id } = event.payload;
-                    res.status(201).send(`/dogs/${id}`);
+                    new createTimelineCommand_1.CreateTimelineCommandHandler()
+                        .handle(new createTimelineCommand_1.CreateTimelineCommand(createTimelineCommandId, id));
+                });
+                bus_1.bus.subscribe(createTimelineCommand_1.timelineCreatedEvent.eventType + createTimelineCommandId, event => {
+                    const { dogId } = event.payload;
+                    res.status(201).send(`/dogs/${dogId}`);
                 });
             }
             catch (ex) {

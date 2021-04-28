@@ -6,31 +6,30 @@ import { createTimelineService } from '../../repositories/timelines'
 import { Timeline } from '../../domains/timelines'
 
 export const timelineCreatedEvent = EventDefinition<{
-    id: string;
+  id: string;
 }>()("timeline.created");
 
 export class CreateTimelineCommand extends Command {
-    dogId: string;
+  dogId: string;
 
-    constructor(commandId: string, dogId: string) {
-        super(commandId);
-        this.dogId = dogId;
-    }
+  constructor(commandId: string, dogId: string) {
+    super(commandId);
+    this.dogId = dogId;
+  }
 }
 
 export class CreateTimelineCommandHandler extends CommandHandler<CreateTimelineCommand> {
-    async handle(command: CreateTimelineCommand): Promise<void> {
+  async handle(command: CreateTimelineCommand): Promise<void> {
+    try {
+      const timeline = new Timeline(null, command.dogId, [], [])
+      await createTimelineService(timeline);
 
-        try {
-            const timeline = new Timeline(null, command.dogId, [], [])
-            await createTimelineService(timeline);
-
-            bus.publish({
-                type: timelineCreatedEvent.eventType + command.id,
-                payload: { id: timeline.id }
-            });
-        } catch (ex) {
-            throw ex;
-        }
+      bus.publish({
+        type: timelineCreatedEvent.eventType + command.id,
+        payload: { id: timeline.id, dogId: timeline.dogId }
+      });
+    } catch (ex) {
+      throw(ex);
     }
+  }
 }
