@@ -7,6 +7,9 @@ export const persistAuthorization = (t) => token = t
 export const generateDefaultHttpBuilder = () =>
   new HttpBuilder()
     .withAuthorization(token)
+    .withFailedStrategy(res => {
+      throw new Error(res)
+    })
 
 export const httpGetBuilder = () =>
   generateDefaultHttpBuilder()

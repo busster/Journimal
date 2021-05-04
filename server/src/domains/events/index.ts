@@ -1,11 +1,13 @@
-export class Event {
-    id: string;
-    type: string;
-    date: Date;
+import moment from 'moment';
 
-    constructor(id: string, type: string, date: Date) {
-        this.id = id;
-        this.type = type;
-        this.date = date;
-    }
+export class Event {
+  id: string;
+  type: string;
+  date: moment.Moment;
+
+  constructor(id: string, type: string, date: moment.Moment) {
+    this.id = id;
+    this.type = type;
+    this.date = date;
+  }
 }

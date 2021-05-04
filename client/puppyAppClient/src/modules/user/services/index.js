@@ -6,34 +6,13 @@ const urls = {
   create: `${appsettings.functionApi}/users`,
 }
 
-export const get = (userId) => {
-  console.log('doing something???', userId)
-  try {
-    return httpGetBuilder()
-      .withSuccessStrategy(res => {
-        console.log('---------------succues---------=--------------------')
-        console.log(res)
-        console.log('------------------------=--------------------')
-        return res
-      })
-      .withFailedStrategy(res => {
-        console.log('-------------fail-----------=--------------------')
-        console.log(res)
-        console.log('------------------------=--------------------')
-        return res
-      })
-      .withUnauthorizedStrategy(res => {
-        console.log('-------------unauth-----------=--------------------')
-        console.log(res)
-        console.log('------------------------=--------------------')
-        return res
-      })
-      .withUrl(urls.get.replace(':userId', userId))
-      .send()
-  } catch (e) {
-    console.log('shit ', e)
-  }
-}
+export const get = (userId) =>
+  httpGetBuilder()
+    .withSuccessStrategy(res => res)
+    .withFailedStrategy(res => res)
+    .withUnauthorizedStrategy(res => res)
+    .withUrl(urls.get.replace(':userId', userId))
+    .send()
 
 export const create = ({ name }) =>
   httpPostBuilder()

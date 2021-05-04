@@ -2,7 +2,8 @@ import { Query, QueryHandler } from '../../utils/cqrs'
 
 import { Timeline } from '../../domains/timelines'
 
-import { getTimelineByIdService } from '../../repositories/timelines'
+// import { getTimelineByIdService } from '../../repositories/timelines'
+const getTimelineByIdService = async (id: string) : Promise<Timeline> => new Timeline('', '', [], [])
 
 export class GetTimelineByIdQuery extends Query {
     id: string;

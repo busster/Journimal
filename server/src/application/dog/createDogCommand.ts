@@ -22,7 +22,6 @@ export class CreateDogCommand extends Command {
 
 export class CreateDogCommandHandler extends CommandHandler<CreateDogCommand> {
   async handle(command: CreateDogCommand): Promise<void> {
-
     try {
       const dog = new Dog(null, command.name, [command.userId]);
 

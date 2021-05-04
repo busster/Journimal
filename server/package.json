@@ -13,7 +13,8 @@
     "start": "node .",
     "start:functions": "npm-run-all build functions",
     "functions": "firebase emulators:start --only functions --debug",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "firebase deploy --only functions"
   },
   "engines": {
     "node": "12"
@@ -28,6 +29,7 @@
     "firebase-admin": "^9.4.2",
     "firebase-functions": "^3.13.1",
     "module-alias": "^2.2.2",
+    "moment": "^2.29.1",
     "reflect-metadata": "^0.1.13",
     "ts-bus": "^2.3.1",
     "uuid": "^8.3.2"
