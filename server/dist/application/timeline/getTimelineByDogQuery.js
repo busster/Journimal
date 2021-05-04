@@ -13,10 +13,11 @@ exports.GetTimelineByDogQueryHandler = exports.GetTimelineByDogQuery = void 0;
 const cqrs_1 = require("../../utils/cqrs");
 const readonly_1 = require("../../repositories/timelines/readonly");
 class GetTimelineByDogQuery extends cqrs_1.Query {
-    constructor(id, date) {
+    constructor(id, startDate, endDate) {
         super();
         this.dogId = id;
-        this.date = date;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 }
 exports.GetTimelineByDogQuery = GetTimelineByDogQuery;
@@ -24,7 +25,7 @@ class GetTimelineByDogQueryHandler extends cqrs_1.QueryHandler {
     handle(query) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return yield readonly_1.getTimelineByDogService(query.dogId, query.date);
+                return yield readonly_1.getTimelineByDogService(query.dogId, query.startDate, query.endDate);
             }
             catch (ex) {
                 throw (ex);

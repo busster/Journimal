@@ -13,7 +13,8 @@
     "start": "node .",
     "start:functions": "npm-run-all build functions",
     "functions": "firebase emulators:start --only functions --debug",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "firebase deploy --only functions"
   },
   "engines": {
     "node": "12"

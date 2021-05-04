@@ -49,11 +49,13 @@ let TimelinesController = class TimelinesController {
     getByDogId(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const dogIdQS = req.query.dogId.toString();
-            const dateQS = req.query.date.toString();
-            const date = moment_1.default(dateQS);
+            const startDateQS = req.query.startDate.toString();
+            const endDateQS = req.query.endDate.toString();
+            const startDate = moment_1.default.utc(startDateQS);
+            const endDate = moment_1.default.utc(endDateQS);
             try {
                 const timeline = yield new getTimelineByDogQuery_1.GetTimelineByDogQueryHandler()
-                    .handle(new getTimelineByDogQuery_1.GetTimelineByDogQuery(dogIdQS, date));
+                    .handle(new getTimelineByDogQuery_1.GetTimelineByDogQuery(dogIdQS, startDate, endDate));
                 res.status(200).send(timeline);
             }
             catch (ex) {
@@ -90,7 +92,7 @@ let TimelinesController = class TimelinesController {
         return __awaiter(this, void 0, void 0, function* () {
             const timelineId = req.params.id;
             const createEventRequest = req.body;
-            const date = moment_1.default(createEventRequest.date);
+            const date = moment_1.default.utc(createEventRequest.date);
             try {
                 const commandId = uuid_1.v4();
                 new createEventCommand_1.CreateEventCommandHandler()
@@ -127,7 +129,7 @@ __decorate([
     controller_1.Post('')
 ], TimelinesController.prototype, "create", null);
 __decorate([
-    controller_1.Get(':dogId?:date?')
+    controller_1.Get(':dogId?:startDate?:endDate?')
 ], TimelinesController.prototype, "getByDogId", null);
 __decorate([
     controller_1.Get('/event-types')

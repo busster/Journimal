@@ -38,16 +38,18 @@ export default class TimelinesController {
     }
   }
 
-  @Get(':dogId?:date?')
+  @Get(':dogId?:startDate?:endDate?')
   public async getByDogId(req: Request, res: Response): Promise<void> {
     const dogIdQS = req.query.dogId.toString();
-    const dateQS = req.query.date.toString()
+    const startDateQS = req.query.startDate.toString()
+    const endDateQS = req.query.endDate.toString()
 
-    const date = moment.utc(dateQS)
+    const startDate = moment.utc(startDateQS)
+    const endDate = moment.utc(endDateQS)
 
     try {
       const timeline = await new GetTimelineByDogQueryHandler()
-          .handle(new GetTimelineByDogQuery(dogIdQS, date))
+          .handle(new GetTimelineByDogQuery(dogIdQS, startDate, endDate))
 
       res.status(200).send(timeline)
     } catch (ex) {

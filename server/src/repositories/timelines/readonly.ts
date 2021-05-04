@@ -6,9 +6,11 @@ import { timestamp } from '../utils'
 import { TimelineVm } from '../../viewModels/timeline'
 import { EventVm } from '../../viewModels/timeline/event'
 
+import { getEventTypesService } from './events/readonly'
+
 const TimelineDoesNotExist = new Error('Timeline does not exist for this dog')
 
-export const getTimelineByDogService = async (dogId: string, date: moment.Moment): Promise<TimelineVm> => {
+export const getTimelineByDogService = async (dogId: string, startDate: moment.Moment, endDate: moment.Moment): Promise<TimelineVm> => {
   const dogTimelines = await timelinesCollection.where('dogId', '==', dogId).get()
 
   if (dogTimelines.empty) throw TimelineDoesNotExist
@@ -18,8 +20,8 @@ export const getTimelineByDogService = async (dogId: string, date: moment.Moment
 
   const events = await filterTimelineEventsByIdAndDate(
     timelineDoc.id,
-    moment(date.startOf('day').format()),
-    moment(date.endOf('day').format())
+    startDate,
+    endDate
   )
 
   return {
@@ -30,22 +32,24 @@ export const getTimelineByDogService = async (dogId: string, date: moment.Moment
 }
 
 export const filterTimelineEventsByIdAndDate = async (timelineId: string, startDate: moment.Moment, endDate: moment.Moment): Promise<EventVm[]> => {
-  console.log(timelineId)
-  console.log(timestamp(startDate))
-  console.log(timestamp(endDate))
-  console.log(endDate.format())
-
   const events = await timelineEventsCollection(timelineId)
     .where('date', '>=', timestamp(startDate))
     .where('date', '<=', timestamp(endDate))
     .get()
+
+  const eventTypes = await getEventTypesService()
+  const eventTypeMap = eventTypes.reduce((acc, n) => {
+    acc[n.type] = n.icon
+    return acc
+  }, {} as {[key: string]: string})
 
   return events.docs.map(e => {
     const eventData = e.data()
 
     return {
       type: eventData.type,
-      date: moment(eventData.date.toDate()).format()
+      date: moment(eventData.date.toDate()).format(),
+      icon: eventTypeMap[eventData.type]
     }
   })
 }

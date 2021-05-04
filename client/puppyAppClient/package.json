@@ -21,6 +21,7 @@
     "deepmerge": "^4.2.2",
     "firebase": "^8.2.1",
     "http-builder": "^1.0.1",
+    "moment": "^2.29.1",
     "react": "16.13.1",
     "react-native": "0.63.3",
     "react-native-gesture-handler": "^1.8.0",

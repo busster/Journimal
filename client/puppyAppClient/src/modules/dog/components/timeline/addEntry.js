@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Text, ScrollView, Pressable } from 'react-native';
+import moment from 'moment'
 
 import { PageBack, Button, ButtonIcon, Colors, Spacing, SpacingConstants, Typography, ww } from 'modules/design'
 
@@ -16,7 +17,11 @@ export default () => {
     dogSend('CANCEL')
   }
 
-  const icons = dogState.context.eventTypes.map(et => et.icon)
+  const handleAddEvent = (eventType) => {
+    dogSend('CREATE_EVENT', { eventType, date: moment.utc() })
+  }
+
+  const icons = dogState.context.eventTypes
 
   return (
     <PageBack
@@ -25,8 +30,8 @@ export default () => {
       centerX
     >
       <ScrollView contentContainerStyle={styles.container} style={styles.actions}>
-        {icons.map(icon => (
-          <ButtonIcon width={buttonSize} height={buttonSize} icon={icon} style={{...Spacing.m05}} />
+        {icons.map(({ type, icon }) => (
+          <ButtonIcon key={type} onPress={() => handleAddEvent(type)} width={buttonSize} height={buttonSize} icon={icon} style={{...Spacing.m05}} />
         ))}
       </ScrollView>
     </PageBack>

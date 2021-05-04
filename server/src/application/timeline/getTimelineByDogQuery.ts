@@ -8,19 +8,21 @@ import { getTimelineByDogService } from '../../repositories/timelines/readonly'
 
 export class GetTimelineByDogQuery extends Query {
   dogId: string;
-  date: moment.Moment;
+  startDate: moment.Moment;
+  endDate: moment.Moment;
 
-  constructor(id: string, date: moment.Moment) {
+  constructor(id: string, startDate: moment.Moment, endDate: moment.Moment) {
     super();
     this.dogId = id;
-    this.date = date;
+    this.startDate = startDate;
+    this.endDate = endDate;
   }
 }
 
 export class GetTimelineByDogQueryHandler extends QueryHandler<GetTimelineByDogQuery, TimelineVm> {
   async handle(query: GetTimelineByDogQuery): Promise<TimelineVm> {
     try {
-      return await getTimelineByDogService(query.dogId, query.date);
+      return await getTimelineByDogService(query.dogId, query.startDate, query.endDate);
     } catch (ex) {
       throw(ex)
     }
