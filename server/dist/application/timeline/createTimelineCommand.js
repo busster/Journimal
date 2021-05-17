@@ -26,7 +26,7 @@ class CreateTimelineCommandHandler extends cqrs_1.CommandHandler {
     handle(command) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const timeline = new timelines_2.Timeline(null, command.dogId, [], []);
+                const timeline = new timelines_2.Timeline(null, command.dogId, null, [], []);
                 yield timelines_1.createTimelineService(timeline);
                 bus_1.bus.publish({
                     type: exports.timelineCreatedEvent.eventType + command.id,

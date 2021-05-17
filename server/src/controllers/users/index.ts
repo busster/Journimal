@@ -22,7 +22,6 @@ export default class UsersController {
     const userId = req.userId
     const { name } = req.body;
     try {
-      // console.log('Received request to create user: ', userId, name)
       const commandId = uuidv4()
       new CreateUserCommandHandler()
         .handle(new CreateUserCommand(commandId, userId, name));

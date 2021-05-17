@@ -9,34 +9,47 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getActivityByIdService = exports.createActivityService = void 0;
+exports.updateActivityService = exports.createActivityService = exports.getActivityById = exports.mapActivity = void 0;
+const utils_1 = require("../../utils");
 const collections_1 = require("../../collections");
 const activities_1 = require("../../../domains/activities");
 const CouldNotCreateActivity = new Error('Could not create activity');
-const ActivityDoesNotExist = new Error('Activity does not exist for this timeline');
-exports.createActivityService = (timeLineId, activity) => __awaiter(void 0, void 0, void 0, function* () {
-    const activitiesDocs = collections_1.timelinesCollection.doc(timeLineId).collection('activities').doc();
-    activity.id = activitiesDocs.id;
+const CouldNotUpdateActivity = new Error('Could not update activity');
+const ActivityDoesNotExist = new Error('Activity does not exist');
+exports.mapActivity = (activity) => ({
+    type: activity.type,
+    startDate: activity.startDate.toDate(),
+    endDate: activity.endDate ? activity.endDate.toDate() : null
+});
+exports.getActivityById = (timelineId, activityId) => __awaiter(void 0, void 0, void 0, function* () {
+    const activityDoc = yield collections_1.timelineActivitiesCollection(timelineId).doc(activityId).get();
+    if (!activityDoc.exists)
+        throw ActivityDoesNotExist;
+    const activityData = activityDoc.data();
+    return new activities_1.Activity(activityDoc.id, activityData.type, utils_1.toDate(activityData.startDate), utils_1.toDate(activityData.endDate));
+});
+exports.createActivityService = (timelineId, activity) => __awaiter(void 0, void 0, void 0, function* () {
+    const timeline = collections_1.timelinesCollection.doc(timelineId);
+    const activityDoc = timeline.collection('activities').doc();
+    activity.id = activityDoc.id;
+    const activityDto = exports.mapActivity(activity);
     try {
-        yield activitiesDocs.create({ type: activity.type, startDate: activity.startDate, endDate: activity.endDate });
+        yield timeline.update({ activeActivity: Object.assign({ id: activity.id }, activityDto) });
+        yield activityDoc.create(activityDto);
     }
     catch (ex) {
         throw CouldNotCreateActivity;
     }
 });
-exports.getActivityByIdService = (timeLineId, activityId) => __awaiter(void 0, void 0, void 0, function* () {
+exports.updateActivityService = (timelineId, activity) => __awaiter(void 0, void 0, void 0, function* () {
+    const timeline = collections_1.timelinesCollection.doc(timelineId);
+    const activityDoc = timeline.collection('activities').doc(activity.id);
+    const activityDto = exports.mapActivity(activity);
     try {
-        const activity = yield collections_1.timelinesCollection.doc(timeLineId).collection('activities').doc(activityId).get();
-        if (!activity.exists) {
-            throw ActivityDoesNotExist;
-        }
-        else {
-            const activityDto = activity.data();
-            return new activities_1.Activity(activityDto.id, activityDto.type, new Date(activityDto.startDate), new Date(activityDto.endDate));
-        }
+        yield activityDoc.update(activityDto);
     }
     catch (ex) {
-        throw ActivityDoesNotExist;
+        throw CouldNotUpdateActivity;
     }
 });
 //# sourceMappingURL=index.js.map

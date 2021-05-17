@@ -1,4 +1,5 @@
 export interface EventVm {
+  id : string;
   type : string;
   date : string;
   icon : string;

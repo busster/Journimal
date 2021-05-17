@@ -9,18 +9,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createEventService = void 0;
+exports.getActivityTypesService = void 0;
 const collections_1 = require("../../collections");
-const CouldNotCreateEvent = new Error('Could not create evemt');
-const EventDoesNotExist = new Error('Event does not exist for this timeline');
-exports.createEventService = (timeLineId, event) => __awaiter(void 0, void 0, void 0, function* () {
-    const eventDoc = collections_1.timelinesCollection.doc(timeLineId).collection('events').doc();
-    event.id = eventDoc.id;
+const CouldNotFetchActivityTypes = new Error('Could not fetch activity types');
+exports.getActivityTypesService = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield eventDoc.create({ type: event.type, date: event.date.toDate() });
+        const activityTypes = yield collections_1.activityTypesCollection.get();
+        return activityTypes.docs.map(activityType => {
+            const activityTypeData = activityType.data();
+            return {
+                type: activityTypeData.type,
+                icon: activityTypeData.icon
+            };
+        });
     }
     catch (ex) {
-        throw CouldNotCreateEvent;
+        throw CouldNotFetchActivityTypes;
     }
 });
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=readonly.js.map

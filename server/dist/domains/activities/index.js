@@ -8,6 +8,9 @@ class Activity {
         this.startDate = startDate;
         this.endDate = endDate;
     }
+    complete(endDate) {
+        this.endDate = endDate;
+    }
 }
 exports.Activity = Activity;
 //# sourceMappingURL=index.js.map

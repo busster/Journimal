@@ -24,7 +24,6 @@ export class CreateUserCommandHandler extends CommandHandler<CreateUserCommand> 
   async handle(command: CreateUserCommand): Promise<void> {
 
     try {
-      // console.log('Received command to create user: ', command)
       const user = new User(command.userId, command.name, [], []);
 
       await createUserService(user);

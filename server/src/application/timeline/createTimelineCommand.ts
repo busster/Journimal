@@ -21,7 +21,7 @@ export class CreateTimelineCommand extends Command {
 export class CreateTimelineCommandHandler extends CommandHandler<CreateTimelineCommand> {
   async handle(command: CreateTimelineCommand): Promise<void> {
     try {
-      const timeline = new Timeline(null, command.dogId, [], [])
+      const timeline = new Timeline(null, command.dogId, null, [], [])
       await createTimelineService(timeline);
 
       bus.publish({

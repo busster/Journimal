@@ -6,10 +6,10 @@ const EventDoesNotExist = new Error('Event does not exist for this timeline')
 
 
 export const createEventService = async (timeLineId: string, event: Event): Promise<void> => {
-  const eventDocs = timelinesCollection.doc(timeLineId).collection('events').doc()
-  event.id = eventDocs.id
+  const eventDoc = timelinesCollection.doc(timeLineId).collection('events').doc()
+  event.id = eventDoc.id
   try {
-      await eventDocs.create({ type: event.type, date: event.date.toDate() })
+      await eventDoc.create({ type: event.type, date: event.date.toDate() })
   } catch (ex) {
       throw CouldNotCreateEvent
   }

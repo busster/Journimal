@@ -1,13 +1,19 @@
-export class Activity {
-    id: string;
-    type: string;
-    startDate: Date;
-    endDate: Date;
+import moment from 'moment';
 
-    constructor(id: string, type: string, startDate: Date, endDate: Date) {
-        this.id = id;
-        this.type = type;
-        this.startDate = startDate;
-        this.endDate = endDate;
-    }
+export class Activity {
+  id: string;
+  type: string;
+  startDate: moment.Moment;
+  endDate: moment.Moment;
+
+  constructor(id: string, type: string, startDate: moment.Moment, endDate: moment.Moment) {
+    this.id = id;
+    this.type = type;
+    this.startDate = startDate;
+    this.endDate = endDate;
+  }
+
+  complete (endDate: moment.Moment) : void {
+    this.endDate = endDate;
+  }
 }

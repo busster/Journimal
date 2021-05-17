@@ -9,30 +9,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetTimelineByIdQueryHandler = exports.GetTimelineByIdQuery = void 0;
+exports.GetTimelineActivitiesQueryHandler = exports.GetTimelineActivitiesQuery = void 0;
 const cqrs_1 = require("../../utils/cqrs");
-const timelines_1 = require("../../domains/timelines");
-// import { getTimelineByIdService } from '../../repositories/timelines'
-const getTimelineByIdService = (id) => __awaiter(void 0, void 0, void 0, function* () { return new timelines_1.Timeline('', '', [], []); });
-class GetTimelineByIdQuery extends cqrs_1.Query {
-    constructor(id) {
+const readonly_1 = require("../../repositories/timelines/activities/readonly");
+class GetTimelineActivitiesQuery extends cqrs_1.Query {
+    constructor() {
         super();
-        this.id = id;
     }
 }
-exports.GetTimelineByIdQuery = GetTimelineByIdQuery;
-class GetTimelineByIdQueryHandler extends cqrs_1.QueryHandler {
+exports.GetTimelineActivitiesQuery = GetTimelineActivitiesQuery;
+class GetTimelineActivitiesQueryHandler extends cqrs_1.QueryHandler {
     handle(query) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const timeline = yield getTimelineByIdService(query.id);
-                return timeline;
+                return yield readonly_1.getActivityTypesService();
             }
             catch (ex) {
-                throw ex;
+                throw (ex);
             }
         });
     }
 }
-exports.GetTimelineByIdQueryHandler = GetTimelineByIdQueryHandler;
-//# sourceMappingURL=getTimelineByIdQuery.js.map
+exports.GetTimelineActivitiesQueryHandler = GetTimelineActivitiesQueryHandler;
+//# sourceMappingURL=getTimelineActivitiesQuery.js.map

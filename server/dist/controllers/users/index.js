@@ -29,7 +29,6 @@ let UsersController = class UsersController {
             const userId = req.userId;
             const { name } = req.body;
             try {
-                // console.log('Received request to create user: ', userId, name)
                 const commandId = uuid_1.v4();
                 new createUserCommand_1.CreateUserCommandHandler()
                     .handle(new createUserCommand_1.CreateUserCommand(commandId, userId, name));

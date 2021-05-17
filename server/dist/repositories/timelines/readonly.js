@@ -8,15 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.filterTimelineEventsByIdAndDate = exports.getTimelineByDogService = void 0;
-const moment_1 = __importDefault(require("moment"));
+exports.filterTimelineActivitiesByIdAndDate = exports.filterTimelineEventsByIdAndDate = exports.getTimelineByDogService = void 0;
 const collections_1 = require("../collections");
 const utils_1 = require("../utils");
 const readonly_1 = require("./events/readonly");
+const readonly_2 = require("./activities/readonly");
 const TimelineDoesNotExist = new Error('Timeline does not exist for this dog');
 exports.getTimelineByDogService = (dogId, startDate, endDate) => __awaiter(void 0, void 0, void 0, function* () {
     const dogTimelines = yield collections_1.timelinesCollection.where('dogId', '==', dogId).get();
@@ -25,10 +22,13 @@ exports.getTimelineByDogService = (dogId, startDate, endDate) => __awaiter(void 
     const timelineDoc = dogTimelines.docs[0];
     const timeline = timelineDoc.data();
     const events = yield exports.filterTimelineEventsByIdAndDate(timelineDoc.id, startDate, endDate);
+    const activities = yield exports.filterTimelineActivitiesByIdAndDate(timelineDoc.id, startDate, endDate);
     return {
         id: timelineDoc.id,
         dogId: timeline.dogId,
-        events
+        activeActivity: timeline.activeActivity ? timeline.activeActivity : null,
+        events,
+        activities
     };
 });
 exports.filterTimelineEventsByIdAndDate = (timelineId, startDate, endDate) => __awaiter(void 0, void 0, void 0, function* () {
@@ -44,9 +44,31 @@ exports.filterTimelineEventsByIdAndDate = (timelineId, startDate, endDate) => __
     return events.docs.map(e => {
         const eventData = e.data();
         return {
+            id: e.id,
             type: eventData.type,
-            date: moment_1.default(eventData.date.toDate()).format(),
+            date: utils_1.toDateString(eventData.date),
             icon: eventTypeMap[eventData.type]
+        };
+    });
+});
+exports.filterTimelineActivitiesByIdAndDate = (timelineId, startDate, endDate) => __awaiter(void 0, void 0, void 0, function* () {
+    const activities = yield collections_1.timelineActivitiesCollection(timelineId)
+        .where('startDate', '>=', utils_1.timestamp(startDate))
+        .where('startDate', '<=', utils_1.timestamp(endDate))
+        .get();
+    const activityTypes = yield readonly_2.getActivityTypesService();
+    const activityTypeMap = activityTypes.reduce((acc, n) => {
+        acc[n.type] = n.icon;
+        return acc;
+    }, {});
+    return activities.docs.map(a => {
+        const activityData = a.data();
+        return {
+            id: a.id,
+            type: activityData.type,
+            startDate: utils_1.toDateString(activityData.startDate),
+            endDate: utils_1.toDateString(activityData.endDate),
+            icon: activityTypeMap[activityData.type]
         };
     });
 });

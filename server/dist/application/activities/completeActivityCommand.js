@@ -9,34 +9,34 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateActivityCommandHandler = exports.CreateActivityCommand = exports.activityCreatedEvent = void 0;
+exports.CompleteActivityCommandHandler = exports.CompleteActivityCommand = exports.activityCompletedEvent = void 0;
 const bus_1 = require("../../utils/bus");
 const cqrs_1 = require("../../utils/cqrs");
 const activities_1 = require("../../repositories/timelines/activities");
 const timelines_1 = require("../../repositories/timelines");
-const activities_2 = require("../../domains/activities");
-exports.activityCreatedEvent = bus_1.EventDefinition()("activity.created");
-class CreateActivityCommand extends cqrs_1.Command {
-    constructor(commandId, timelineId, type, startDate) {
+exports.activityCompletedEvent = bus_1.EventDefinition()("activity.created");
+class CompleteActivityCommand extends cqrs_1.Command {
+    constructor(commandId, timelineId, activityId, endDate) {
         super(commandId);
         this.timelineId = timelineId;
-        this.type = type;
-        this.startDate = startDate;
+        this.activityId = activityId;
+        this.endDate = endDate;
     }
 }
-exports.CreateActivityCommand = CreateActivityCommand;
-class CreateActivityCommandHandler extends cqrs_1.CommandHandler {
+exports.CompleteActivityCommand = CompleteActivityCommand;
+class CompleteActivityCommandHandler extends cqrs_1.CommandHandler {
     handle(command) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const timeline = yield timelines_1.getTimelineByIdQuery(command.timelineId);
-                const activity = new activities_2.Activity(null, command.type, command.startDate, null);
-                timeline.startActivity(activity);
-                yield activities_1.createActivityService(command.timelineId, activity);
+                const activity = yield activities_1.getActivityById(command.timelineId, command.activityId);
+                activity.complete(command.endDate);
+                timeline.completeActivity(activity);
+                yield activities_1.updateActivityService(command.timelineId, activity);
                 yield timelines_1.updateTimelineService(timeline);
                 bus_1.bus.publish({
-                    type: exports.activityCreatedEvent.eventType + command.id,
-                    payload: { activityId: activity.id }
+                    type: exports.activityCompletedEvent.eventType + command.id,
+                    payload: { completedActivityId: activity.id }
                 });
             }
             catch (ex) {
@@ -45,5 +45,5 @@ class CreateActivityCommandHandler extends cqrs_1.CommandHandler {
         });
     }
 }
-exports.CreateActivityCommandHandler = CreateActivityCommandHandler;
-//# sourceMappingURL=createActivityCommand.js.map
+exports.CompleteActivityCommandHandler = CompleteActivityCommandHandler;
+//# sourceMappingURL=completeActivityCommand.js.map

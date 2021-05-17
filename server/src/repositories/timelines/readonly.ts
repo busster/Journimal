@@ -1,12 +1,14 @@
 import moment from 'moment'
 
-import { timelinesCollection, timelineEventsCollection } from '../collections'
-import { timestamp } from '../utils'
+import { timelinesCollection, timelineEventsCollection, timelineActivitiesCollection } from '../collections'
+import { timestamp, toDateString } from '../utils'
 
 import { TimelineVm } from '../../viewModels/timeline'
 import { EventVm } from '../../viewModels/timeline/event'
+import { ActivityVm } from '../../viewModels/timeline/activity'
 
 import { getEventTypesService } from './events/readonly'
+import { getActivityTypesService } from './activities/readonly'
 
 const TimelineDoesNotExist = new Error('Timeline does not exist for this dog')
 
@@ -24,10 +26,18 @@ export const getTimelineByDogService = async (dogId: string, startDate: moment.M
     endDate
   )
 
+  const activities = await filterTimelineActivitiesByIdAndDate(
+    timelineDoc.id,
+    startDate,
+    endDate
+  )
+
   return {
     id: timelineDoc.id,
     dogId: timeline.dogId,
-    events
+    activeActivity: timeline.activeActivity ? timeline.activeActivity : null,
+    events,
+    activities
   }
 }
 
@@ -47,9 +57,35 @@ export const filterTimelineEventsByIdAndDate = async (timelineId: string, startD
     const eventData = e.data()
 
     return {
+      id: e.id,
       type: eventData.type,
-      date: moment(eventData.date.toDate()).format(),
+      date: toDateString(eventData.date),
       icon: eventTypeMap[eventData.type]
+    }
+  })
+}
+
+export const filterTimelineActivitiesByIdAndDate = async (timelineId: string, startDate: moment.Moment, endDate: moment.Moment): Promise<ActivityVm[]> => {
+  const activities = await timelineActivitiesCollection(timelineId)
+    .where('startDate', '>=', timestamp(startDate))
+    .where('startDate', '<=', timestamp(endDate))
+    .get()
+
+  const activityTypes = await getActivityTypesService()
+  const activityTypeMap = activityTypes.reduce((acc, n) => {
+    acc[n.type] = n.icon
+    return acc
+  }, {} as {[key: string]: string})
+
+  return activities.docs.map(a => {
+    const activityData = a.data()
+
+    return {
+      id: a.id,
+      type: activityData.type,
+      startDate: toDateString(activityData.startDate),
+      endDate: toDateString(activityData.endDate),
+      icon: activityTypeMap[activityData.type]
     }
   })
 }
