@@ -9,8 +9,8 @@ export default ({ timelineData, onRefresh, refreshing }) => {
       <View style={styles.activities}></View>
       <View style={styles.events}>
         <View style={styles.eventsWrapper}>
-          {item.events.map(entry => (
-              <ButtonIconCircle style={styles.icon} icon={entry.icon} />
+          {item.events.map((entry, index) => (
+              <ButtonIconCircle key={index} style={styles.icon} icon={entry.icon} />
             ))}
         </View>
         <Text style={styles.date}>{ item.minute }</Text>

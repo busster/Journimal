@@ -1,5 +1,5 @@
 
-import { timelinesCollection } from '../collections'
+import { timelinesCollection, activityTypesCollection } from '../collections'
 
 import { Timeline } from '../../domains/timelines'
 import { Event } from '../../domains/events'
@@ -47,6 +47,16 @@ export const createTimelineService = async (timeline: Timeline): Promise<void> =
 export const updateTimelineService = async (timeline: Timeline) : Promise<void> => {
   const timelineDoc = timelinesCollection.doc(timeline.id)
   const timelineDto = mapTimelineForUpdate(timeline)
-  const activeActivity = timeline.activeActivity ? { id: timeline.activeActivity.id, ...timelineDto.activeActivity } : null
+
+  let activeActivity = null
+
+  if (timeline.activeActivity) {
+    const activityTypes = await activityTypesCollection
+      .where('type', '==', timelineDto.activeActivity.type)
+      .get();
+
+    const icon = activityTypes.docs.length > 0 && activityTypes.docs[0].data().icon
+    activeActivity = { id: timeline.activeActivity.id, ...timelineDto.activeActivity, icon }
+  }
   await timelineDoc.update({ dogId: timelineDto.dogId, activeActivity })
 }

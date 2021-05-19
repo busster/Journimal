@@ -48,7 +48,14 @@ exports.createTimelineService = (timeline) => __awaiter(void 0, void 0, void 0, 
 exports.updateTimelineService = (timeline) => __awaiter(void 0, void 0, void 0, function* () {
     const timelineDoc = collections_1.timelinesCollection.doc(timeline.id);
     const timelineDto = mapTimelineForUpdate(timeline);
-    const activeActivity = timeline.activeActivity ? Object.assign({ id: timeline.activeActivity.id }, timelineDto.activeActivity) : null;
+    let activeActivity = null;
+    if (timeline.activeActivity) {
+        const activityTypes = yield collections_1.activityTypesCollection
+            .where('type', '==', timelineDto.activeActivity.type)
+            .get();
+        const icon = activityTypes.docs.length > 0 && activityTypes.docs[0].data().icon;
+        activeActivity = Object.assign(Object.assign({ id: timeline.activeActivity.id }, timelineDto.activeActivity), { icon });
+    }
     yield timelineDoc.update({ dogId: timelineDto.dogId, activeActivity });
 });
 //# sourceMappingURL=index.js.map

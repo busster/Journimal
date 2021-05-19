@@ -7,7 +7,7 @@ import { PageBack, Button, ButtonIcon, Colors, Spacing, SpacingConstants, Typogr
 import { useService } from '@xstate/react'
 import { appService } from 'modules/core/machines'
 
-export default ({ title, eventTypes, onBack, onAddEvent }) => {
+export default ({ title, activityTypes, onBack, onAddActivity }) => {
   const buttonSize = (ww() - (SpacingConstants['05'] * 5)) / 5 
 
   return (
@@ -17,8 +17,8 @@ export default ({ title, eventTypes, onBack, onAddEvent }) => {
       centerX
     >
       <ScrollView contentContainerStyle={styles.container} style={styles.actions}>
-        {eventTypes.map(({ type, icon }) => (
-          <ButtonIcon key={type} onPress={() => onAddEvent(type)} width={buttonSize} height={buttonSize} icon={icon} style={{...Spacing.m05}} />
+        {activityTypes.map(({ type, icon }) => (
+          <ButtonIcon key={type} onPress={() => onAddActivity(type)} width={buttonSize} height={buttonSize} icon={icon} style={{...Spacing.m05}} />
         ))}
       </ScrollView>
     </PageBack>

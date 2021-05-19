@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Text, FlatList, Pressable } from 'react-native';
+import moment from 'moment'
 
 import { PageBack, Button, ButtonFloating, ArrowLeftIcon, Colors, Spacing, Typography, wpw } from 'modules/design'
 
@@ -10,14 +11,17 @@ import { paramsRef } from 'modules/core/router/ref'
 import { dogMachineName } from 'modules/dog/machines'
 
 import AddEntry from 'modules/dog/components/timeline/addEntry'
+import AddActivity from 'modules/dog/components/timeline/addActivity'
 import Loading from 'modules/dog/components/loading'
-import Entries from 'modules/dog/components/timeline/entries'
+import TimelineView from 'modules/dog/components/timeline/view'
 
 export default ({ route, navigation }) => {
   const [state, send] = useService(appService)
   const [dogState, dogSend] = useService(state.context.activeDogMachine)
+  const [timelineState, timelineSend] = useService(dogState.context.timeline)
 
-  console.log('DOG_STATE: ', dogState)
+  console.log('DOG_STATE: ', JSON.stringify(dogState.context, undefined, 2))
+  console.log('TIMELINE_STATE: ', JSON.stringify(timelineState.context, undefined, 2))
 
   const createTimelineData = (timelineEntries) => {
     return Object.keys(timelineEntries).map(day => {
@@ -30,39 +34,63 @@ export default ({ route, navigation }) => {
     })
   }
 
-  const timelineData = createTimelineData(dogState.context.timelineEntries)
+  const timelineData = createTimelineData(timelineState.context.timelineEntries)
+  const activeActivity = timelineState.context.timeline.activeActivity
 
   const routeToHome = () => {
     navigation.goBack()
   }
-
   const navigateToAddEntry = () => {
-    dogSend('GO_TO_ENTRY_CREATION')
+    timelineSend('GO_TO_ENTRY_CREATION')
   }
-
+  const navigateToAddActivity = () => {
+    timelineSend('GO_TO_ACTIVITY_CREATION')
+  }
   const handleRefreshTimeline = () => {
-    dogSend('REFRESH_TIMELINE')
+    timelineSend('REFRESH_TIMELINE')
+  }
+  const cancelAdd = () => {
+    timelineSend('CANCEL')
+  }
+  const handleAddEvent = (eventType) => {
+    timelineSend('CREATE_EVENT', { eventType, date: moment.utc() })
+  }
+  const handleAddActivity = (activityType) => {
+    timelineSend('CREATE_ACTIVITY', { activityType, date: moment.utc() })
+  }
+  const handleCompleteActiveActivity = () => {
+    timelineSend('COMPLETE_ACTIVITY', { activeActivity, date: moment.utc() })
   }
 
-  if (dogState.matches('timeline.view')) {
+  if (timelineState.matches('view')) {
     return (
-      <PageBack
-        onBack={routeToHome}
+      <TimelineView
         title={dogState.context.name}
-        style={styles.timelinePage}
-      >
-        <Entries
-          timelineData={timelineData}
-          onRefresh={handleRefreshTimeline}
-          refreshing={dogState.matches('timeline.loadTimeline')}
-        />
-        <View style={[styles.fab, Spacing.m1]}>
-          <ButtonFloating onPress={navigateToAddEntry} text="+" />
-        </View>
-      </PageBack>
-    )
-  } else if (dogState.matches('timeline.addEntry')) {
-    return <AddEntry />
+        timelineData={timelineData}
+        refreshing={timelineState.matches('loadTimeline')}
+        onBack={routeToHome}
+        onRefreshTimeline={handleRefreshTimeline}
+        onAddEntry={navigateToAddEntry}
+        onAddActivity={navigateToAddActivity}
+        onCompleteActiveActivity={handleCompleteActiveActivity}
+        activeActivity={activeActivity}
+      />)
+  } else if (timelineState.matches('addEntry')) {
+    return (
+      <AddEntry
+        title="Add Entry"
+        eventTypes={timelineState.context.eventTypes}
+        onBack={cancelAdd}
+        onAddEvent={handleAddEvent}
+      />)
+  } else if (timelineState.matches('addActivity')) {
+    return (
+      <AddActivity
+        title="Start Activity"
+        activityTypes={timelineState.context.activityTypes}
+        onBack={cancelAdd}
+        onAddActivity={handleAddActivity}
+      />)
   } else {
     return <Loading />
   }

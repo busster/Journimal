@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Text, Pressable } from 'react-native';
 import { Colors, shade } from 'modules/design/styles'
 
+import { Icon } from 'modules/design/components/icons/base'
+
 import { styleIfTrue } from 'modules/design/components/utils'
 
 export const ButtonFloating = ({
   onPress,
   onLongPress,
   text,
+  icon,
   disabled,
   variation = 'primary',
   width = 50,
@@ -21,6 +24,8 @@ export const ButtonFloating = ({
     height: height + n,
     borderRadius: height + n
   })
+
+  const offset = -25
 
   return (
     <Pressable
@@ -37,14 +42,19 @@ export const ButtonFloating = ({
         ...styleIfTrue(pressed, styles[`button-floating--${variation}--pressed`]),
       }}
     >
-      <Text
-        style={{
-          ...styles['button-floating__text'],
-          ...styles[`button-floating__text--${variation}`],
-          ...styleIfTrue(pressed, styles[`button-floating__text--${variation}--pressed`]),
-          ...styleIfTrue(disabled, styles['button-floating__text--disabled'])
-        }}
-      >{ text }</Text>
+      {icon ? 
+        <Icon
+          icon={icon}
+          width={dims(offset).width} height={dims(offset).height}
+        /> :
+        <Text
+          style={{
+            ...styles['button-floating__text'],
+            ...styles[`button-floating__text--${variation}`],
+            ...styleIfTrue(pressed, styles[`button-floating__text--${variation}--pressed`]),
+            ...styleIfTrue(disabled, styles['button-floating__text--disabled'])
+          }}
+        >{ text }</Text>}
     </Pressable>)
 }
 
@@ -67,6 +77,13 @@ const styles = StyleSheet.create({
   'button-floating--primary--pressed': {
     backgroundColor: shade(Colors.Primary, -10),
   },
+
+  'button-floating--secondary': {
+    backgroundColor: Colors.Secondary,
+  },
+  'button-floating--secondary--pressed': {
+    backgroundColor: shade(Colors.Secondary, -10),
+  },
   
   'button--disabled': {},
 
@@ -76,6 +93,13 @@ const styles = StyleSheet.create({
     color: Colors.Accent
   },
   'button-floating__text--primary--pressed': {
+    color: Colors.Background
+  },
+
+  'button-floating__text--secondary': {
+    color: Colors.Accent
+  },
+  'button-floating__text--secondary--pressed': {
     color: Colors.Background
   },
   'button-floating__text--disabled': {},
