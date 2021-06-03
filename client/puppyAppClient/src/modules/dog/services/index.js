@@ -19,8 +19,8 @@ export const create = ({ name }) =>
     .withBody({ name })
     .send()
 
-export const getTimeline = async (dogId, { start, end }) => 
-  httpGetBuilder()
+export const getTimeline = async (dogId, { start, end }) => {
+  return httpGetBuilder()
     .withUrl(
       urls.timeline
         .replace('{dogId}', dogId)
@@ -28,12 +28,20 @@ export const getTimeline = async (dogId, { start, end }) =>
         .replace('{endDate}', end.format())
     )
     .withSuccessStrategy(res => {
-      const { id, dogId, events, activeActivity } = res.data
+      const { id, dogId, events, activities, activeActivity } = res.data
       return {
         id,
         dogId,
         activeActivity,
-        events: events.map(({ type, date, icon }) => ({
+        activities: activities.map(({ type, startDate, endDate, icon, id }) => ({
+          id,
+          type,
+          icon,
+          startDate: moment.utc(startDate).local(),
+          endDate: endDate ? moment.utc(endDate).local() : null
+        })),
+        events: events.map(({ type, date, icon, id }) => ({
+          id,
           type,
           icon,
           date: moment.utc(date).local()
@@ -41,6 +49,7 @@ export const getTimeline = async (dogId, { start, end }) =>
       }
     })
     .send()
+}
   
 export const getEventTypes = () =>
   httpGetBuilder()

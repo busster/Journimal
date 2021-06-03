@@ -12,12 +12,16 @@ import moment from 'moment'
 
 import { getTimeline, getEventTypes, saveEvent, getActivityTypes, startActivity, completeActivity } from 'modules/dog/services'
 
+import { Timeline, Entries } from 'modules/dog/models/timeline'
+
 const fetchEventTypes = (context, event) => getEventTypes()
 const fetchTimeline = (context, event) => getTimeline(context.dogId, context.timelineWindow)
 const addEventService = (context, { eventType, date }) => saveEvent(context.timeline.id, { type: eventType, date })
 const fetchActivityTypes = (context, event) => getActivityTypes()
 const addActivityService = (context, { activityType, date }) => startActivity(context.timeline.id, { type: activityType, date })
 const completeActivityService = (context, { activeActivity, date }) => completeActivity(context.timeline.id, { activityId: activeActivity.id, date })
+
+const DAYS_OFFSET = 10
 
 const services = {
   fetchEventTypes,
@@ -28,24 +32,22 @@ const services = {
   completeActivityService
 }
 
+const defaultTimelineWindow = {
+  offset: 0,
+  start: moment.utc(moment().subtract(DAYS_OFFSET, 'days').startOf('day').format()),
+  end: moment.utc(moment().endOf('day').format())
+}
+
 const actions = {
   setTimeline: assign({
     timeline: (context, event) => {
-      const { id, dogId, activeActivity } = event.data
-      return { id, dogId, activeActivity }
-    },
-    timelineEntries: (context, event) => {
-      const { events } = event.data
-
-      return events.reduce((acc, n) => {
-        const date = n.date
-        const day = date.format('ddd, MMMM Do')
-        const minute = date.format('h:mm a')
-        const { minutes } = acc[day] || { minutes: {} }
-        const { events } = minutes[minute] || { events: [] }
-        acc[day] = { minutes: { ...minutes, [minute]: { events: [ ...events, n ] } } }
-        return acc
-      }, {})
+      const timeline = context.timeline
+      timeline.entries.addEvents(event.data.events)
+      timeline.entries.addActivities(event.data.activities)
+      timeline.id = event.data.id
+      timeline.activeActivity = event.data.activeActivity
+      timeline.dogId = event.data.dogId
+      return timeline
     }
   }),
   setEventTypes: assign({
@@ -53,6 +55,21 @@ const actions = {
   }),
   setActivityTypes: assign({
     activityTypes: (context, event) => event.data
+  }),
+  resetTimelineWindow: assign({
+    timelineWindow: defaultTimelineWindow
+  }),
+  resetTimeline: assign({
+    timeline: Timeline()
+  }),
+  updateTimelineWindow: assign({
+    timelineWindow: (context, event) => {
+      const offset = context.timelineWindow.offset + 1
+      const newOffset = DAYS_OFFSET * offset
+      const start = moment.utc(moment().subtract(newOffset + DAYS_OFFSET, 'days').startOf('day').format())
+      const end = moment.utc(moment().subtract(newOffset, 'days').endOf('day').format())
+      return { offset, start, end }
+    }
   })
 }
 
@@ -61,21 +78,24 @@ const guards = {
   activityTypesLoaded: (context, event) => context.activityTypes.length > 0
 }
 
-const defaultContext = {
+const defaultContext = () => ({
   dogId: null,
-  timeline: {},
+  timeline: Timeline(),
   timelineEntries: {},
   eventTypes: [],
   activityTypes: [],
-  timelineWindow: {
-    start: moment.utc(moment().startOf('day').format()),
-    end: moment.utc(moment().endOf('day').format())
-  }
+  timelineWindow: defaultTimelineWindow
+})
+
+const REFRESH_TIMELINE = {
+  target: 'loadTimeline',
+  actions: ['resetTimelineWindow', 'resetTimeline']
 }
+
 export const createTimelineMachine = (id, dogId) =>
   Machine({
     id,
-    context: { ...defaultContext, dogId },
+    context: { ...defaultContext(), dogId },
     initial: 'loadTimeline',
     states: {
       loadTimeline: {
@@ -91,14 +111,18 @@ export const createTimelineMachine = (id, dogId) =>
       },
       couldNotLoadTimeline: {
         on: {
-          REFRESH_TIMELINE: 'loadTimeline'
+          REFRESH_TIMELINE
         }
       },
       view: {
         on: {
           GO_TO_ENTRY_CREATION: 'loadEventTypes',
           GO_TO_ACTIVITY_CREATION: 'loadActivityTypes',
-          REFRESH_TIMELINE: 'loadTimeline',
+          REFRESH_TIMELINE,
+          LOAD_NEXT: {
+            target: 'loadTimeline',
+            actions: ['updateTimelineWindow', 'loggylog']
+          },
           COMPLETE_ACTIVITY: 'completeActivity'
         }
       },

@@ -10,6 +10,7 @@ const TextDisabled = '#597986'
 export const Colors = {
   Primary: BurntSienna,
   Secondary: PersianGreen,
+  Tertiary: OrangeYellowCrayola,
   Background: Charcoal,
   Accent: White
 }

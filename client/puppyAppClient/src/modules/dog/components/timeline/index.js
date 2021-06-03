@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, FlatList, Pressable } from 'react-native';
 import moment from 'moment'
+import _orderBy from 'lodash/orderBy'
 
 import { PageBack, Button, ButtonFloating, ArrowLeftIcon, Colors, Spacing, Typography, wpw } from 'modules/design'
 
@@ -20,21 +21,25 @@ export default ({ route, navigation }) => {
   const [dogState, dogSend] = useService(state.context.activeDogMachine)
   const [timelineState, timelineSend] = useService(dogState.context.timeline)
 
-  console.log('DOG_STATE: ', JSON.stringify(dogState.context, undefined, 2))
-  console.log('TIMELINE_STATE: ', JSON.stringify(timelineState.context, undefined, 2))
+  // console.log('DOG_STATE: ', JSON.stringify(dogState.context, undefined, 2))
+  console.log('TIMELINE_STATE: ', JSON.stringify(timelineState.context.timeline.entries, undefined, 2))
 
-  const createTimelineData = (timelineEntries) => {
-    return Object.keys(timelineEntries).map(day => {
-      const { minutes } = timelineEntries[day]
-      const data = Object.keys(minutes).map(minute => {
-        const { events } = minutes[minute]
-        return { minute, events: events.map(({ icon, type }) => ({ icon, type })) }
-      })
-      return { day, data }
+  const createTimelineData = (days = []) =>
+    _orderBy(
+      [ ...days ],
+      ([ dayKey, dayData ]) => dayData.date.valueOf(),
+      ['desc']
+    ).map(([ dayKey, dayData ]) => {
+      const { minutes } = dayData
+      const data = _orderBy(
+        [ ...minutes ],
+        ([ minuteKey, minuteData ]) => minuteData.date.valueOf(),
+        ['desc']
+      ).map(([ minuteKey, minuteData ]) => ({ minuteKey, ...minuteData }))
+      return { dayKey, data }
     })
-  }
 
-  const timelineData = createTimelineData(timelineState.context.timelineEntries)
+  const timelineData = createTimelineData(timelineState.context.timeline.entries.get())
   const activeActivity = timelineState.context.timeline.activeActivity
 
   const routeToHome = () => {
@@ -61,8 +66,12 @@ export default ({ route, navigation }) => {
   const handleCompleteActiveActivity = () => {
     timelineSend('COMPLETE_ACTIVITY', { activeActivity, date: moment.utc() })
   }
+  const handleLoadNextDay = () => {
+    console.log('ASDF ASDF ASDF ASDF loading')
+    timelineSend('LOAD_NEXT')
+  }
 
-  if (timelineState.matches('view')) {
+  if (['view', 'loadTimeline'].some(timelineState.matches)) {
     return (
       <TimelineView
         title={dogState.context.name}
@@ -74,6 +83,7 @@ export default ({ route, navigation }) => {
         onAddActivity={navigateToAddActivity}
         onCompleteActiveActivity={handleCompleteActiveActivity}
         activeActivity={activeActivity}
+        onLoadNextDay={handleLoadNextDay}
       />)
   } else if (timelineState.matches('addEntry')) {
     return (

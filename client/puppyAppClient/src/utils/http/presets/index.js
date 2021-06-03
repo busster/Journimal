@@ -30,3 +30,7 @@ export const httpGetBuilder = () =>
 export const httpPostBuilder = () =>
   generateDefaultHttpBuilder()
     .asPost()
+
+export const httpGetRawBuilder = () =>
+  httpGetBuilder()
+    .withSuccessStrategy(res => res)

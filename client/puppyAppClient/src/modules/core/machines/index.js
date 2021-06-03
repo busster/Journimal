@@ -120,6 +120,6 @@ export const appService = interpret(appMachine)
 appService.onTransition(state => {
   console.log(`
     \nstate: ${state.value},
-    \ncontext: ${JSON.stringify(state.context, undefined, 2)}
+    \ncontext.user: ${JSON.stringify(state.context.user, undefined, 2)}
   `)
 })

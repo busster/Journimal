@@ -27,6 +27,7 @@ const authStateOberver = new Subject()
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
     user.getIdToken(/* forceRefresh */ true).then(function(idToken) {
+      console.log('accessToken ', idToken)
       persistAuthorization(idToken)
       authStateOberver.next(user)
     })

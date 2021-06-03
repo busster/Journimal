@@ -63,6 +63,20 @@ const styles = StyleSheet.create({
   'button-circle--primary--pressed': {
     backgroundColor: shade(Colors.Primary, -10),
   },
+
+  'button-circle--secondary': {
+    backgroundColor: Colors.Secondary,
+  },
+  'button-circle--secondary--pressed': {
+    backgroundColor: shade(Colors.Secondary, -10),
+  },
+
+  'button-circle--tertiary': {
+    backgroundColor: Colors.Tertiary,
+  },
+  'button-circle--tertiary--pressed': {
+    backgroundColor: shade(Colors.Tertiary, -10),
+  },
   
   'button--disabled': {},
 
@@ -74,5 +88,20 @@ const styles = StyleSheet.create({
   'button-circle__text--primary--pressed': {
     color: Colors.Background
   },
+
+  'button-circle__text--secondary': {
+    color: Colors.Accent
+  },
+  'button-circle__text--secondary--pressed': {
+    color: Colors.Background
+  },
+
+  'button-circle__text--tertiary': {
+    color: Colors.Accent
+  },
+  'button-circle__text--tertiary--pressed': {
+    color: Colors.Background
+  },
+
   'button-circle__text--disabled': {},
 })

@@ -84,6 +84,13 @@ const styles = StyleSheet.create({
   'button-floating--secondary--pressed': {
     backgroundColor: shade(Colors.Secondary, -10),
   },
+
+  'button-floating--tertiary': {
+    backgroundColor: Colors.Tertiary,
+  },
+  'button-floating--secondary--pressed': {
+    backgroundColor: shade(Colors.Tertiary, -10),
+  },
   
   'button--disabled': {},
 
@@ -102,5 +109,13 @@ const styles = StyleSheet.create({
   'button-floating__text--secondary--pressed': {
     color: Colors.Background
   },
+
+  'button-floating__text--tertiary': {
+    color: Colors.Accent
+  },
+  'button-floating__text--tertiary--pressed': {
+    color: Colors.Background
+  },
+
   'button-floating__text--disabled': {},
 })

@@ -8,7 +8,7 @@ import { appService } from 'modules/core/machines'
 
 import Entries from 'modules/dog/components/timeline/entries'
 
-export default ({ title, timelineData, refreshing, onBack, onRefreshTimeline, onAddEntry, onAddActivity, onCompleteActiveActivity, activeActivity }) => {
+export default ({ title, timelineData, refreshing, onBack, onRefreshTimeline, onAddEntry, onAddActivity, onCompleteActiveActivity, activeActivity, onLoadNextDay }) => {
   return (
     <PageBack
       onBack={onBack}
@@ -19,12 +19,13 @@ export default ({ title, timelineData, refreshing, onBack, onRefreshTimeline, on
         timelineData={timelineData}
         onRefresh={onRefreshTimeline}
         refreshing={refreshing}
+        onLoadNextDay={onLoadNextDay}
       />
       <View style={[styles.fab, Spacing.m1]}>
         { activeActivity ? 
           <ButtonFloating style={Spacing.mb05} variation="secondary" onPress={onCompleteActiveActivity} icon={activeActivity.icon} /> :
           null }
-        <ButtonFloating style={Spacing.mb05} variation="secondary" onPress={onAddActivity} text="+" />
+        <ButtonFloating style={Spacing.mb05} variation="tertiary" onPress={onAddActivity} text="+" />
         <ButtonFloating onPress={onAddEntry} text="+" />
       </View>
     </PageBack>

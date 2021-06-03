@@ -15,7 +15,6 @@ export default () => {
       setSplashUri(uri)
     })()
   }, [])
-  console.log(splashUri)
   return (
     <Page centerX centerY>
       <Image style={styles.splashImage} source={{ uri: splashUri }} />

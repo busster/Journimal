@@ -1,30 +1,42 @@
 import React from 'react';
 import { StyleSheet, View, Text, SectionList, Pressable } from 'react-native';
 
-import { PageBack, Button, ButtonIconCircle, ButtonFloating, ArrowLeftIcon, Colors, Spacing, Typography, wpw } from 'modules/design'
+import { PageBack, Button, ButtonIconCircle, ButtonFloating, ArrowLeftIcon, Colors, shade, Spacing, Typography, wpw } from 'modules/design'
 
-export default ({ timelineData, onRefresh, refreshing }) => {
+export default ({ timelineData, onRefresh, refreshing, onLoadNextDay }) => {
   const renderItem = ({ item }) => (
     <View style={styles.entry}>
-      <View style={styles.activities}></View>
-      <View style={styles.events}>
+      <View style={styles.activities}>
         <View style={styles.eventsWrapper}>
-          {item.events.map((entry, index) => (
-              <ButtonIconCircle key={index} style={styles.icon} icon={entry.icon} />
+          {[...item.activities].map(([ key, entry ]) => entry).map((entry, index) => (
+              <ButtonIconCircle variation='tertiary' key={index} style={styles.icon} icon={entry.icon} />
             ))}
         </View>
-        <Text style={styles.date}>{ item.minute }</Text>
+      </View>
+      <View style={styles.dateContainer}>
+        <Text style={styles.date}>{ item.minuteKey }</Text>
+      </View>
+      <View style={styles.events}>
+        <View style={styles.eventsWrapper}>
+          {[...item.events].map(([ key, entry ]) => entry).map((entry, index) => (
+              <ButtonIconCircle variation='primary' key={index} style={styles.icon} icon={entry.icon} />
+            ))}
+        </View>
       </View>
     </View>
   )
 
   const renderSectionHeader = ({ section }) => (
     <View>
-      <Text style={styles.header}>{ section.day }</Text>
+      <Text style={styles.header}>{ section.dayKey }</Text>
     </View>
   )
 
-  const keyExtractor = item => item.minute
+  const sectionSeparator = ({ leadingItem }) => (
+    leadingItem ? (<View style={styles.separator}></View>) : null
+  )
+
+  const keyExtractor = item => item.minuteKey
 
   return (
     <SectionList
@@ -34,6 +46,9 @@ export default ({ timelineData, onRefresh, refreshing }) => {
       renderSectionHeader={renderSectionHeader}
       onRefresh={onRefresh}
       refreshing={refreshing}
+      onEndReached={onLoadNextDay}
+      onEndReachedThreshold={0.5}
+      SectionSeparatorComponent={sectionSeparator}
     />
   )
 }
@@ -51,12 +66,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   activities: {
-    flex: 0.5,
+    flex: 0.4,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'flex-end',
   },
   events: {
-    flex: 0.5,
+    flex: 0.4,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -69,8 +85,17 @@ const styles = StyleSheet.create({
     ...Spacing.mx025,
     ...Spacing.my025
   },
+  dateContainer: {
+    flex: 0.2,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
   date: {
-    flexGrow: 1,
-    color: Colors.Accent
+    color: Colors.Accent,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: shade(Colors.Background, -10),
+    ...Spacing.mt1
   }
 })

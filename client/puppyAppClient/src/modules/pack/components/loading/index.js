@@ -5,7 +5,6 @@ import { PageBack, Button, ButtonFloating, ArrowLeftIcon, Colors, Spacing, Typog
 
 export default ({ route, navigation }) => {
   const routeToHome = () => {
-    console.log(navigation)
     navigation.goBack()
   }
 
