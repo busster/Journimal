@@ -17,8 +17,8 @@ export const PackRouter = ({ route, navigation }) => {
   const { packId, pack } = route.params
 
   useEffect(() => {
-    send('SET_ACTIVE_PACK', { packId, pack })
-  }, [ packId ])
+    send('SET_ACTIVE_PACK', { packId, pack, navigation })
+  }, [ packId ]);
 
   const activePackMachine = state.context.activePackMachine
   const packLoaded = activePackMachine && activePackMachine.id === packMachineName(packId)

@@ -29,14 +29,14 @@ export class CreatePackCommandHandler extends CommandHandler<CreatePackCommand> 
     try {
       const dogs : [string, PackMemberType, PackMemberRank][] = []
       command.dogs.forEach(dog => {
-        dogs.push([dog, PackMemberType.Dog, PackMemberRank.Dog])
+        dogs.push([dog, PackMemberType.Dog, PackMemberRank.Member])
       })
 
       const pack = new Pack(
         null,
         command.name,
         [
-          [command.userId, PackMemberType.User, PackMemberRank.Leader],
+          [command.userId, PackMemberType.Human, PackMemberRank.Leader],
           ...dogs
         ]
       );

@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   'button-floating--tertiary': {
     backgroundColor: Colors.Tertiary,
   },
-  'button-floating--secondary--pressed': {
+  'button-floating--tertiary--pressed': {
     backgroundColor: shade(Colors.Tertiary, -10),
   },
   

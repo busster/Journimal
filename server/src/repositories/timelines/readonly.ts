@@ -66,9 +66,14 @@ export const filterTimelineEventsByIdAndDate = async (timelineId: string, startD
 }
 
 export const filterTimelineActivitiesByIdAndDate = async (timelineId: string, startDate: moment.Moment, endDate: moment.Moment): Promise<ActivityVm[]> => {
-  const activities = await timelineActivitiesCollection(timelineId)
+  const startedActivities = await timelineActivitiesCollection(timelineId)
     .where('startDate', '>=', timestamp(startDate))
     .where('startDate', '<=', timestamp(endDate))
+    .get()
+
+  const endedActivities = await timelineActivitiesCollection(timelineId)
+    .where('endDate', '>=', timestamp(startDate))
+    .where('endDate', '<=', timestamp(endDate))
     .get()
 
   const activityTypes = await getActivityTypesService()
@@ -77,15 +82,20 @@ export const filterTimelineActivitiesByIdAndDate = async (timelineId: string, st
     return acc
   }, {} as {[key: string]: string})
 
-  return activities.docs.map(a => {
-    const activityData = a.data()
-
-    return {
-      id: a.id,
+  const activities = [...startedActivities.docs, ...endedActivities.docs].reduce((acc, n) => {
+    const activityData = n.data()
+    const id = n.id
+    const activity = {
+      id,
       type: activityData.type,
       startDate: toDateString(activityData.startDate),
       endDate: toDateString(activityData.endDate),
       icon: activityTypeMap[activityData.type]
     }
-  })
+
+    acc.set(id, activity)
+    return acc
+  }, new Map())
+
+  return [...activities.values()]
 }

@@ -13,5 +13,11 @@ export const Typography = StyleSheet.create({
   },
   subTitle: {
     fontSize: 25
+  },
+  button: {
+    fontSize: 14
+  },
+  buttonBig: {
+    fontSize: 24
   }
 })

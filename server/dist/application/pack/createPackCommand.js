@@ -30,10 +30,10 @@ class CreatePackCommandHandler extends cqrs_1.CommandHandler {
             try {
                 const dogs = [];
                 command.dogs.forEach(dog => {
-                    dogs.push([dog, pack_1.PackMemberType.Dog, pack_1.PackMemberRank.Dog]);
+                    dogs.push([dog, pack_1.PackMemberType.Dog, pack_1.PackMemberRank.Member]);
                 });
                 const pack = new pack_1.Pack(null, command.name, [
-                    [command.userId, pack_1.PackMemberType.User, pack_1.PackMemberRank.Leader],
+                    [command.userId, pack_1.PackMemberType.Human, pack_1.PackMemberRank.Leader],
                     ...dogs
                 ]);
                 yield packs_1.createPackService(pack);

@@ -5,6 +5,7 @@ import { Colors, shade } from 'modules/design/styles'
 import { Neomorph, Shadow } from 'react-native-neomorph-shadows'
 
 import { styleIfTrue } from 'modules/design/components/utils'
+import { Typography } from 'modules/design/styles/typography';
 
 export const Button = ({
   onPress,
@@ -14,7 +15,8 @@ export const Button = ({
   variation = 'primary',
   width = 50,
   height = 50,
-  style
+  style,
+  typography = Typography.button
 }) => {
   const [pressed, setPressed] = useState(false)
 
@@ -31,6 +33,7 @@ export const Button = ({
     >
       <Text
         style={{
+          ...typography,
           ...styles['button__text'],
           ...styles[`button__text--${variation}`],
           ...styleIfTrue(pressed, styles[`button__text--${variation}--pressed`]),

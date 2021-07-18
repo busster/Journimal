@@ -20,6 +20,10 @@ export const create = ({ name }) =>
     .send()
 
 export const getTimeline = async (dogId, { start, end }) => {
+  console.log(urls.timeline
+    .replace('{dogId}', dogId)
+    .replace('{startDate}', start.format())
+    .replace('{endDate}', end.format()))
   return httpGetBuilder()
     .withUrl(
       urls.timeline

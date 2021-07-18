@@ -27,8 +27,8 @@ const entriesDef = {
   },
   addActivities: function (activities) {
     activities.forEach(activity => {
-      addEntry(this.days, activity.startDate, 'activity', activity)
-      if (activity.endDate) addEntry(this.days, activity.endDate, 'activity', activity)
+      addEntry(this.days, activity.startDate, 'activity', { ...activity, time: 'start' })
+      if (activity.endDate) addEntry(this.days, activity.endDate, 'activity', { ...activity, time: 'end' })
     })
   }
 }

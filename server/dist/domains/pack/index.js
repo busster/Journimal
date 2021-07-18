@@ -1,15 +1,19 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Pack = exports.PackMemberType = exports.PackMemberRank = void 0;
+exports.PackInvite = exports.Pack = exports.PackMemberType = exports.PackMemberRank = void 0;
+const moment_1 = __importDefault(require("moment"));
 var PackMemberRank;
 (function (PackMemberRank) {
-    PackMemberRank[PackMemberRank["Leader"] = 0] = "Leader";
-    PackMemberRank[PackMemberRank["Dog"] = 1] = "Dog";
+    PackMemberRank["Leader"] = "Leader";
+    PackMemberRank["Member"] = "Member";
 })(PackMemberRank = exports.PackMemberRank || (exports.PackMemberRank = {}));
 var PackMemberType;
 (function (PackMemberType) {
-    PackMemberType[PackMemberType["User"] = 0] = "User";
-    PackMemberType[PackMemberType["Dog"] = 1] = "Dog";
+    PackMemberType["Human"] = "Human";
+    PackMemberType["Dog"] = "Dog";
 })(PackMemberType = exports.PackMemberType || (exports.PackMemberType = {}));
 class Pack {
     constructor(id, name, members) {
@@ -17,6 +21,18 @@ class Pack {
         this.name = name;
         this.members = members;
     }
+    join(members) {
+        // members.forEach(member => {
+        // })
+    }
 }
 exports.Pack = Pack;
+class PackInvite {
+    constructor(packId, userId) {
+        this.packId = packId;
+        this.userId = userId;
+        this.expirationDate = moment_1.default().add(1, 'days');
+    }
+}
+exports.PackInvite = PackInvite;
 //# sourceMappingURL=index.js.map

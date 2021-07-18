@@ -18,7 +18,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const uuid_1 = require("uuid");
 const controller_1 = require("../../utils/controller");
 const bus_1 = require("../../utils/bus");
+const logger_1 = require("../../utils/logger");
 const createPackCommand_1 = require("../../application/pack/createPackCommand");
+const createPackInviteCommand_1 = require("../../application/pack/createPackInviteCommand");
+const getPackByIdQuery_1 = require("../../application/pack/getPackByIdQuery");
+const joinPackByInviteCommand_1 = require("../../application/pack/joinPackByInviteCommand");
 let PacksController = class PacksController {
     create(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -42,13 +46,53 @@ let PacksController = class PacksController {
         return __awaiter(this, void 0, void 0, function* () {
             const userId = req.userId;
             const packId = req.params.packId;
+            logger_1.Logger.log(`starting get request for pack: ${packId} for user: ${userId}`);
             try {
-                // const pack = await new GetPackByIdQueryHandler()
-                //   .handle(new GetPackByIdQuery(userId, packId))
-                // res.status(200).send(pack)
+                const pack = yield new getPackByIdQuery_1.GetPackByIdQueryHandler()
+                    .handle(new getPackByIdQuery_1.GetPackByIdQuery(packId, userId));
+                res.status(200).send(pack);
             }
             catch (ex) {
                 res.status(404).send(ex.message);
+            }
+        });
+    }
+    createInvite(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const userId = req.userId;
+            const packId = req.params.packId;
+            logger_1.Logger.log(`starting create invite request for pack: ${packId} for user: ${userId}`);
+            try {
+                const commandId = uuid_1.v4();
+                new createPackInviteCommand_1.CreatePackInviteCommandHandler()
+                    .handle(new createPackInviteCommand_1.CreatePackInviteCommand(commandId, packId, userId));
+                bus_1.bus.subscribe(createPackInviteCommand_1.packInviteCreatedEvent.eventType + commandId, event => {
+                    const { inviteId } = event.payload;
+                    res.status(200).send(inviteId);
+                });
+            }
+            catch (ex) {
+                res.status(400).send('Pack invite params not valid');
+            }
+        });
+    }
+    joinByInvite(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const userId = req.userId;
+            const inviteId = req.body.inviteId;
+            const dogs = req.body.dogs;
+            logger_1.Logger.log(`starting join by invite request for user: ${userId}`);
+            try {
+                const commandId = uuid_1.v4();
+                new joinPackByInviteCommand_1.JoinPackByInviteCommandHandler()
+                    .handle(new joinPackByInviteCommand_1.JoinPackByInviteCommand(commandId, inviteId, userId, dogs));
+                bus_1.bus.subscribe(joinPackByInviteCommand_1.joinedPackByInviteEvent.eventType + commandId, event => {
+                    const { packId } = event.payload;
+                    res.status(200).send(packId);
+                });
+            }
+            catch (ex) {
+                res.status(400).send('Pack invite params not valid');
             }
         });
     }
@@ -59,6 +103,12 @@ __decorate([
 __decorate([
     controller_1.Get('/:packId')
 ], PacksController.prototype, "getById", null);
+__decorate([
+    controller_1.Post('/:packId/createInvite')
+], PacksController.prototype, "createInvite", null);
+__decorate([
+    controller_1.Post('/join')
+], PacksController.prototype, "joinByInvite", null);
 PacksController = __decorate([
     controller_1.Controller('/packs')
 ], PacksController);

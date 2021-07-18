@@ -32,10 +32,14 @@ const services = {
   completeActivityService
 }
 
-const defaultTimelineWindow = {
-  offset: 0,
-  start: moment.utc(moment().subtract(DAYS_OFFSET, 'days').startOf('day').format()),
-  end: moment.utc(moment().endOf('day').format())
+const generateDefaultTimeline = () => {
+  const newWindow = {
+    offset: 0,
+    start: moment.utc(moment().subtract(DAYS_OFFSET, 'days').startOf('day').format()),
+    end: moment.utc(moment().endOf('day').format())
+  }
+  console.log(newWindow)
+  return newWindow
 }
 
 const actions = {
@@ -57,7 +61,7 @@ const actions = {
     activityTypes: (context, event) => event.data
   }),
   resetTimelineWindow: assign({
-    timelineWindow: defaultTimelineWindow
+    timelineWindow: generateDefaultTimeline()
   }),
   resetTimeline: assign({
     timeline: Timeline()
@@ -84,7 +88,7 @@ const defaultContext = () => ({
   timelineEntries: {},
   eventTypes: [],
   activityTypes: [],
-  timelineWindow: defaultTimelineWindow
+  timelineWindow: generateDefaultTimeline()
 })
 
 const REFRESH_TIMELINE = {
@@ -121,7 +125,7 @@ export const createTimelineMachine = (id, dogId) =>
           REFRESH_TIMELINE,
           LOAD_NEXT: {
             target: 'loadTimeline',
-            actions: ['updateTimelineWindow', 'loggylog']
+            actions: ['updateTimelineWindow']
           },
           COMPLETE_ACTIVITY: 'completeActivity'
         }

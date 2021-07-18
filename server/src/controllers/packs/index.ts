@@ -4,8 +4,12 @@ import {
   Request, Response
 } from '../../utils/controller';
 import { bus } from '../../utils/bus'
+import { Logger } from '../../utils/logger'
 
-import { CreatePackCommand, CreatePackCommandHandler, packCreatedEvent } from '../../application/pack/createPackCommand'
+import { CreatePackCommand, CreatePackCommandHandler, packCreatedEvent } from '../../application/pack/createPackCommand';
+import { CreatePackInviteCommand, CreatePackInviteCommandHandler, packInviteCreatedEvent } from '../../application/pack/createPackInviteCommand';
+import { GetPackByIdQueryHandler, GetPackByIdQuery } from '../../application/pack/getPackByIdQuery';
+import { JoinPackByInviteCommandHandler, JoinPackByInviteCommand, joinedPackByInviteEvent } from '../../application/pack/joinPackByInviteCommand';
 
 @Controller('/packs')
 export default class PacksController {
@@ -15,7 +19,7 @@ export default class PacksController {
     const userId = req.userId
     const { name, dogs } = req.body;
     try {
-      const commandId = uuidv4()
+      const commandId = uuidv4();
       new CreatePackCommandHandler()
         .handle(new CreatePackCommand(commandId, userId, name, dogs))
 
@@ -30,15 +34,55 @@ export default class PacksController {
 
   @Get('/:packId')
   public async getById(req : Request, res : Response) : Promise<void> {
-    const userId = req.userId
-    const packId = req.params.packId
+    const userId = req.userId;
+    const packId = req.params.packId;
+    Logger.log(`starting get request for pack: ${packId} for user: ${userId}`);
     try {
-      // const pack = await new GetPackByIdQueryHandler()
-      //   .handle(new GetPackByIdQuery(userId, packId))
+      const pack = await new GetPackByIdQueryHandler()
+        .handle(new GetPackByIdQuery(packId, userId));
 
-      // res.status(200).send(pack)
+      res.status(200).send(pack);
     } catch (ex) {
       res.status(404).send(ex.message)
+    }
+  }
+
+  @Post('/:packId/createInvite')
+  public async createInvite(req : Request, res : Response) : Promise<void> {
+    const userId = req.userId;
+    const packId = req.params.packId;
+    Logger.log(`starting create invite request for pack: ${packId} for user: ${userId}`);
+    try {
+      const commandId = uuidv4();
+      new CreatePackInviteCommandHandler()
+        .handle(new CreatePackInviteCommand(commandId, packId, userId));
+
+      bus.subscribe(packInviteCreatedEvent.eventType + commandId, event => {
+        const { inviteId } = event.payload;
+        res.status(200).send(inviteId);
+      })
+    } catch(ex) {
+      res.status(400).send('Pack invite params not valid');
+    }
+  }
+
+  @Post('/join')
+  public async joinByInvite(req : Request, res : Response) : Promise<void> {
+    const userId = req.userId;
+    const inviteId = req.body.inviteId;
+    const dogs = req.body.dogs;
+    Logger.log(`starting join by invite request for user: ${userId}`);
+    try {
+      const commandId = uuidv4();
+      new JoinPackByInviteCommandHandler()
+        .handle(new JoinPackByInviteCommand(commandId, inviteId, userId, dogs));
+
+      bus.subscribe(joinedPackByInviteEvent.eventType + commandId, event => {
+        const { packId } = event.payload;
+        res.status(200).send(packId);
+      })
+    } catch(ex) {
+      res.status(400).send('Pack invite params not valid');
     }
   }
 }

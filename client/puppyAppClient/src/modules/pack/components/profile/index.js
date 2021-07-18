@@ -3,20 +3,20 @@ import { StyleSheet, View, Text, Pressable } from 'react-native';
 
 import { PageBack, Button, ArrowLeftIcon, Colors, Spacing, Typography, wpw } from 'modules/design'
 
-import { useService } from '@xstate/react'
-import { appService } from 'modules/core/machines'
-import { paramsRef } from 'modules/core/router/ref'
+import { useChildService } from 'modules/core/machines'
 
-import { packMachineName } from 'modules/pack/machines'
+import MembersView from './members';
 
 export default ({ navigation }) => {
-  const [state, send] = useService(appService)
+  const [packState, packSend] = useChildService(state => state.context.activePackMachine);
 
-  const [packState, packSend] = useService(state.context.activePackMachine)
+  console.log('PackState Context: ' + JSON.stringify(packState.context, null, 2))
 
   const routeToHome = () => {
-    navigation.goBack()
-  }
+    navigation.goBack();
+  };
+
+  const { members } = packState.context;
 
   return (
     <PageBack
@@ -25,6 +25,7 @@ export default ({ navigation }) => {
       style={styles.body}
       centerX
     >
+      <MembersView members={members} canAddMembers={true} />
     </PageBack>
   )
 }
@@ -32,6 +33,5 @@ export default ({ navigation }) => {
 const styles = StyleSheet.create({
   body: {
     justifyContent: 'flex-end',
-    ...Spacing.mb1
   }
 })

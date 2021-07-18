@@ -8,9 +8,14 @@ export default ({ timelineData, onRefresh, refreshing, onLoadNextDay }) => {
     <View style={styles.entry}>
       <View style={styles.activities}>
         <View style={styles.eventsWrapper}>
-          {[...item.activities].map(([ key, entry ]) => entry).map((entry, index) => (
-              <ButtonIconCircle variation='tertiary' key={index} style={styles.icon} icon={entry.icon} />
-            ))}
+          {[...item.activities].map(([ key, entry ]) => entry).map((entry, index) => {
+            return (
+              entry.time === 'start' ?
+                <ButtonIconCircle variation='tertiary' key={index} style={styles.icon} icon={entry.icon} /> :
+                <ButtonIconCircle variation='tertiary' width={40} height={40} key={index} style={{...styles.icon, ...Spacing.mx05}} icon={entry.icon} />
+            )
+
+          })}
         </View>
       </View>
       <View style={styles.dateContainer}>

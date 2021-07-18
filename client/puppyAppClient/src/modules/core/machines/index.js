@@ -4,6 +4,7 @@ import {
   interpret,
   spawn
 } from 'xstate';
+import { useService } from '@xstate/react'
 
 import * as Router from 'modules/core/router/ref'
 
@@ -94,9 +95,9 @@ const appMachine = Machine({
         activeDogMachine: dogMachine
       }
     }),
-    spawnAndSetPackMachine: assign((context, { packId, pack }) => {
-      const packName = packMachineName(packId)
-      const packMachine = spawnPackMachine(context, { packId, pack })
+    spawnAndSetPackMachine: assign((context, { packId, pack, navigation }) => {
+      const packName = packMachineName(packId);
+      const packMachine = spawnPackMachine(context, { packId, pack, navigation, user: { id: context.user.id } });
       return {
         machines: {
           ...context.machines,
@@ -115,7 +116,9 @@ const appMachine = Machine({
   }
 })
 
-export const appService = interpret(appMachine)
+export const appService = interpret(appMachine);
+export const useChildService = (func) =>
+  useService(func(useService(appService)[0]));
 
 appService.onTransition(state => {
   console.log(`
