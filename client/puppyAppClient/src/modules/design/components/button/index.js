@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, Pressable } from 'react-native';
-import { Colors, shade } from 'modules/design/styles'
+import { Colors, TextColors, shade } from 'modules/design/styles'
 
 import { Neomorph, Shadow } from 'react-native-neomorph-shadows'
 
@@ -20,14 +20,34 @@ export const Button = ({
 }) => {
   const [pressed, setPressed] = useState(false)
 
-  const dims = (n = 0) => ({ width: width + n, height: height + n })
+  const dims = (n = 0) => ({ width: width + n, height: height + n });
+
+  const handlePressIn = () => {
+    if (disabled) {
+      return
+    }
+    setPressed(true)
+  }
+
+  const wrappedOnPress = () => {
+    if (disabled) {
+      return;
+    }
+    onPress();
+  }
+  const wrappedOnLongPress = () => {
+    if (disabled) {
+      return;
+    }
+    onLongPress();
+  }
 
   const pressable = (
     <Pressable
-      onPressIn={() => setPressed(true)}
+      onPressIn={handlePressIn}
       onPressOut={() => setPressed(false)}
-      onPress={onPress}
-      onLongPress={onLongPress}
+      onPress={wrappedOnPress}
+      onLongPress={wrappedOnLongPress}
       hitSlop={25}
       style={styles['button__hitbox']}
     >
@@ -37,7 +57,7 @@ export const Button = ({
           ...styles['button__text'],
           ...styles[`button__text--${variation}`],
           ...styleIfTrue(pressed, styles[`button__text--${variation}--pressed`]),
-          ...styleIfTrue(disabled, styles['button__text--disabled'])
+          ...styleIfTrue(disabled, styles[`button__text--${variation}--disabled`])
         }}
       >{ text }</Text>
     </Pressable>)
@@ -49,7 +69,7 @@ export const Button = ({
         style={{
           ...styles['button__skin'],
           ...styleIfTrue(pressed, styles['button__skin--pressed']),
-          ...styleIfTrue(disabled, styles['button__skin--disabled']),
+          ...styleIfTrue(disabled, styles[`button__skin--disabled`]),
           ...dims(-10)
         }}
       >
@@ -90,6 +110,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: Colors.Primary
   },
+  'button__skin--disabled': {
+    backgroundColor: shade(Colors.Primary, -15)
+  },
   'button__skin--pressed': {
     shadowRadius: 2,
     borderRadius: 9,
@@ -117,5 +140,10 @@ const styles = StyleSheet.create({
   'button__text--minimal--pressed': {
     color: Colors.Primary
   },
-  'button__text--disabled': {},
+  'button__text--primary--disabled': {
+    color: TextColors.Disabled
+  },
+  'button__text--minimal--disabled': {
+    color: TextColors.Disabled
+  }
 })

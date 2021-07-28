@@ -2,7 +2,8 @@ import {
   Machine,
   assign,
   interpret,
-  spawn
+  spawn,
+  actions
 } from 'xstate';
 import { useService } from '@xstate/react'
 
@@ -14,6 +15,8 @@ import { logoutService } from 'modules/authentication/machines/logout'
 
 import { spawnDogMachine, dogMachineName } from 'modules/dog/machines'
 import { spawnPackMachine, packMachineName } from 'modules/pack/machines'
+
+const { respond } = actions;
 
 const spawnMachineGenerator = (nameFunc, spawnFunc, nameMap) =>
   assign({
@@ -61,6 +64,9 @@ const appMachine = Machine({
         },
         SET_ACTIVE_PACK: {
           actions: ['spawnAndSetPackMachine']
+        },
+        GET_DOGS: {
+          actions: 'giveDogs'
         }
       }
     },
@@ -105,7 +111,8 @@ const appMachine = Machine({
         },
         activePackMachine: packMachine
       }
-    })
+    }),
+    giveDogs: respond(context => ({ type: 'ACCEPT_DOGS', dogs: context.user.dogs }))
   },
   services: {
     authenticationMachine,

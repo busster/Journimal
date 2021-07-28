@@ -5,21 +5,43 @@ import { Grid, Tile, PageBack, Button, ButtonIconCircle, ButtonFloating, ArrowLe
 
 export default ({
   members,
-  canAddMembers = false
+  handlePressDog,
+  handleAddMember,
+  canAddMembers = false,
 }) => {
-  const handlePressMember = (id, type) => {}
+  const handlePressMember = ({ id, type, name, }) => {
+    switch (type) {
+      case 'Dog':
+        handlePressDog({ id, name })
+        break;
+      case 'Human':
+        break;
+    }
+  }
 
   const renderItem = ({ item, size }) => {
     const { id, type, name, addMemberButton } = item;
 
     if (addMemberButton) {
       return (
-        <Button key={id} typography={Typography.buttonBig} variation='minimal' text='+' height={size - 26} width={size - 2} />
+        <Button
+          key={id}
+          typography={Typography.buttonBig}
+          variation='minimal'
+          text='+'
+          height={size - 26}
+          width={size - 2}
+          onPress={handleAddMember}
+        />
       );
     }
 
     return (
-      <Pressable styles={{ height:size, width:size, ...styles.member }} key={id} onPress={() => handlePressMember(id, type)}>
+      <Pressable
+        styles={{ height:size, width:size, ...styles.member }}
+        key={id}
+        onPress={() => handlePressMember({ id, type, name, })}
+      >
         <Tile title={name} height={size - 26} width={size - 2} />
       </Pressable>
     );
