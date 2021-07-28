@@ -19,11 +19,15 @@ class Pack {
     constructor(id, name, members) {
         this.id = id;
         this.name = name;
-        this.members = members;
+        this.members = members.reduce((membersMap, member) => {
+            membersMap.set(member[0], member);
+            return membersMap;
+        }, new Map());
     }
-    join(members) {
-        // members.forEach(member => {
-        // })
+    addMembers(members) {
+        members.forEach(member => {
+            this.members.set(member[0], member);
+        });
     }
 }
 exports.Pack = Pack;

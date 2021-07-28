@@ -36,7 +36,7 @@ export class JoinPackByInviteCommandHandler extends CommandHandler<JoinPackByInv
             ([dogId, PackMemberType.Dog, PackMemberRank.Member]))
       ];
 
-      pack.join(members);
+      pack.addMembers(members);
 
       await updatePackService(pack);
 

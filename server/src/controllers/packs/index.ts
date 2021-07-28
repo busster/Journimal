@@ -10,6 +10,7 @@ import { CreatePackCommand, CreatePackCommandHandler, packCreatedEvent } from '.
 import { CreatePackInviteCommand, CreatePackInviteCommandHandler, packInviteCreatedEvent } from '../../application/pack/createPackInviteCommand';
 import { GetPackByIdQueryHandler, GetPackByIdQuery } from '../../application/pack/getPackByIdQuery';
 import { JoinPackByInviteCommandHandler, JoinPackByInviteCommand, joinedPackByInviteEvent } from '../../application/pack/joinPackByInviteCommand';
+import { CreateAddDogsToPackCommandHandler,CreateAddDogsToPackCommand, dogsAddedToPackEvent } from '../../application/pack/addDogsToPackCommand';
 
 @Controller('/packs')
 export default class PacksController {
@@ -66,6 +67,25 @@ export default class PacksController {
     }
   }
 
+  @Post('/:packId/addDogs')
+  public async addDogs(req : Request, res : Response) : Promise<void> {
+    const userId = req.userId;
+    const packId = req.params.packId;
+    const dogs = req.body.dogs;
+    Logger.log(`starting add dogs request for pack: ${packId} for user: ${userId}`);
+    try {
+      const commandId = uuidv4();
+      new CreateAddDogsToPackCommandHandler()
+        .handle(new CreateAddDogsToPackCommand(commandId, userId, packId, dogs));
+
+      bus.subscribe(dogsAddedToPackEvent.eventType + commandId, event => {
+        res.status(200).send();
+      })
+    } catch(ex) {
+      res.status(400).send('Pack invite params not valid');
+    }
+  }
+
   @Post('/join')
   public async joinByInvite(req : Request, res : Response) : Promise<void> {
     const userId = req.userId;
@@ -85,4 +105,6 @@ export default class PacksController {
       res.status(400).send('Pack invite params not valid');
     }
   }
+
+
 }

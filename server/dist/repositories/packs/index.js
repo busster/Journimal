@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createPackInviteService = exports.getPackByIdService = exports.getPackByInvite = exports.updatePackService = exports.createPackService = void 0;
 const moment_1 = __importDefault(require("moment"));
+const lodash_1 = __importDefault(require("lodash"));
 const utils_1 = require("../utils");
 const collections_1 = require("../collections");
 const pack_1 = require("../../domains/pack");
@@ -65,19 +66,42 @@ exports.updatePackService = (pack) => __awaiter(void 0, void 0, void 0, function
             .set({
             name: pack.name
         });
+        const savedMembers = new Map();
         const packMembersRef = yield collections_1.packMembersCollection.where('packId', '==', pack.id).get();
-        packMembersRef.forEach((packMemberRef) => __awaiter(void 0, void 0, void 0, function* () {
-            const packMemberData = packMemberRef.data();
-            const matchedMember = pack.members.find(member => member[0] === packMemberData.id);
-            if (matchedMember) {
-                yield collections_1.packMembersCollection.doc(packMemberRef.id).update({
-                    packId: pack.id,
-                    memberId: matchedMember[0],
-                    memberType: matchedMember[1],
-                    rank: matchedMember[2]
-                });
-            }
-        }));
+        packMembersRef.forEach(packMemberRef => {
+            const docId = packMemberRef.id;
+            const { memberId, memberType, rank } = packMemberRef.data();
+            savedMembers.set(docId, [memberId, memberType, rank]);
+        });
+        const membersToRemove = lodash_1.default.differenceWith([...savedMembers], [...pack.members], ([_docId, [aid]], [bid]) => aid === bid);
+        // console.log(`[...membersToRemove]: ${[...membersToRemove]}`)
+        membersToRemove.forEach(([docId, member]) => {
+            collections_1.packMembersCollection.doc(docId).delete();
+        });
+        const membersToAdd = lodash_1.default.differenceWith([...pack.members], [...savedMembers], ([aid], [_docId, [bid]]) => aid === bid);
+        // console.log(`[...membersToAdd]: ${[...membersToAdd]}`)
+        membersToAdd.forEach(([id, member]) => {
+            collections_1.packMembersCollection
+                .doc()
+                .set({
+                packId: pack.id,
+                memberId: id,
+                memberType: member[1],
+                rank: member[2]
+            });
+        });
+        const membersToUpdate = lodash_1.default.intersectionWith([...savedMembers], [...pack.members], ([_docId, [aid]], [bid]) => aid === bid);
+        // console.log(`[...membersToUpdate]: ${[...membersToUpdate]}`)
+        membersToUpdate.forEach(([docId, member]) => {
+            collections_1.packMembersCollection
+                .doc(docId)
+                .update({
+                packId: pack.id,
+                memberId: member[0],
+                memberType: member[1],
+                rank: member[2]
+            });
+        });
     }
     catch (ex) {
         throw errors_1.CouldNotUpdatePack;
@@ -109,7 +133,7 @@ exports.getPackByIdService = (packUid) => __awaiter(void 0, void 0, void 0, func
         else {
             const packDto = pack.data();
             const packMembersDto = yield getPackMembersByPackId(packUid);
-            return new pack_1.Pack(packDto.id, packDto.name, packMembersDto);
+            return new pack_1.Pack(packUid, packDto.name, packMembersDto);
         }
     }
     catch (ex) {

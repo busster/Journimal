@@ -23,6 +23,7 @@ const createPackCommand_1 = require("../../application/pack/createPackCommand");
 const createPackInviteCommand_1 = require("../../application/pack/createPackInviteCommand");
 const getPackByIdQuery_1 = require("../../application/pack/getPackByIdQuery");
 const joinPackByInviteCommand_1 = require("../../application/pack/joinPackByInviteCommand");
+const addDogsToPackCommand_1 = require("../../application/pack/addDogsToPackCommand");
 let PacksController = class PacksController {
     create(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -76,6 +77,25 @@ let PacksController = class PacksController {
             }
         });
     }
+    addDogs(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const userId = req.userId;
+            const packId = req.params.packId;
+            const dogs = req.body.dogs;
+            logger_1.Logger.log(`starting add dogs request for pack: ${packId} for user: ${userId}`);
+            try {
+                const commandId = uuid_1.v4();
+                new addDogsToPackCommand_1.CreateAddDogsToPackCommandHandler()
+                    .handle(new addDogsToPackCommand_1.CreateAddDogsToPackCommand(commandId, userId, packId, dogs));
+                bus_1.bus.subscribe(addDogsToPackCommand_1.dogsAddedToPackEvent.eventType + commandId, event => {
+                    res.status(200).send();
+                });
+            }
+            catch (ex) {
+                res.status(400).send('Pack invite params not valid');
+            }
+        });
+    }
     joinByInvite(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const userId = req.userId;
@@ -106,6 +126,9 @@ __decorate([
 __decorate([
     controller_1.Post('/:packId/createInvite')
 ], PacksController.prototype, "createInvite", null);
+__decorate([
+    controller_1.Post('/:packId/addDogs')
+], PacksController.prototype, "addDogs", null);
 __decorate([
     controller_1.Post('/join')
 ], PacksController.prototype, "joinByInvite", null);

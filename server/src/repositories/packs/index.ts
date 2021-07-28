@@ -1,9 +1,10 @@
 import moment from 'moment';
+import _ from 'lodash';
 import { db } from '../index'
 import { toDate } from '../utils';
 import { packsCollection, packInvitesCollection, packMembersCollection } from '../collections'
 
-import { Pack, PackInvite, PackMemberType, PackMemberRank } from '../../domains/pack'
+import { Pack, PackInvite, PackMember, PackMemberType, PackMemberRank } from '../../domains/pack'
 
 import { PackDoesNotExist, CouldNotCreatePack, CouldNotUpdatePack, NotMemberOfPack, PackInviteNotExist, PackInviteExpired } from './errors'
 
@@ -64,19 +65,45 @@ export const updatePackService = async (pack: Pack): Promise<void> => {
         name: pack.name
       })
 
+
+    const savedMembers: Map<string, PackMember> = new Map();
     const packMembersRef = await packMembersCollection.where('packId', '==', pack.id).get();
-    packMembersRef.forEach(async packMemberRef => {
-      const packMemberData = packMemberRef.data()
-      const matchedMember = pack.members.find(member => member[0] === packMemberData.id);
-      if (matchedMember) {
-        await packMembersCollection.doc(packMemberRef.id).update({
-          packId: pack.id,
-          memberId: matchedMember[0],
-          memberType: matchedMember[1],
-          rank: matchedMember[2]
-        })
-      }
+    packMembersRef.forEach(packMemberRef => {
+      const docId = packMemberRef.id;
+      const { memberId, memberType, rank } = packMemberRef.data();
+      savedMembers.set(docId, [memberId, memberType, rank]);
     })
+
+    const membersToRemove = _.differenceWith([...savedMembers], [...pack.members], ([_docId, [aid]], [bid]) => aid === bid);
+    // console.log(`[...membersToRemove]: ${[...membersToRemove]}`)
+    membersToRemove.forEach(([docId, member]) => {
+      packMembersCollection.doc(docId).delete();
+    });
+
+    const membersToAdd = _.differenceWith([...pack.members], [...savedMembers], ([aid], [_docId, [bid]]) => aid === bid);
+    // console.log(`[...membersToAdd]: ${[...membersToAdd]}`)
+    membersToAdd.forEach(([id, member]) => {
+      packMembersCollection
+        .doc()
+        .set({
+          packId: pack.id,
+          memberId: id,
+          memberType: member[1],
+          rank: member[2]
+        });
+    });
+    const membersToUpdate = _.intersectionWith([...savedMembers], [...pack.members], ([_docId, [aid]], [bid]) => aid === bid);
+    // console.log(`[...membersToUpdate]: ${[...membersToUpdate]}`)
+    membersToUpdate.forEach(([docId, member]) => {
+      packMembersCollection
+        .doc(docId)
+        .update({
+          packId: pack.id,
+          memberId: member[0],
+          memberType: member[1],
+          rank: member[2]
+        });
+    });
   } catch (ex) {
     throw CouldNotUpdatePack
   }
@@ -113,7 +140,7 @@ export const getPackByIdService = async (packUid : string) : Promise<Pack> => {
 
       const packMembersDto = await getPackMembersByPackId(packUid);
 
-      return new Pack(packDto.id, packDto.name, packMembersDto);
+      return new Pack(packUid, packDto.name, packMembersDto);
     }
   } catch (ex) {
     throw PackDoesNotExist

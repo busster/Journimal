@@ -9,34 +9,36 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.JoinPackByInviteCommandHandler = exports.JoinPackByInviteCommand = exports.joinedPackByInviteEvent = void 0;
+exports.CreateAddDogsToPackCommandHandler = exports.CreateAddDogsToPackCommand = exports.dogsAddedToPackEvent = void 0;
 const bus_1 = require("../../utils/bus");
 const cqrs_1 = require("../../utils/cqrs");
 const packs_1 = require("../../repositories/packs");
 const pack_1 = require("../../domains/pack");
-exports.joinedPackByInviteEvent = bus_1.EventDefinition()("pack.joinedByInvite");
-class JoinPackByInviteCommand extends cqrs_1.Command {
-    constructor(commandId, inviteId, userId, dogs) {
+exports.dogsAddedToPackEvent = bus_1.EventDefinition()("pack.dogsAdded");
+class CreateAddDogsToPackCommand extends cqrs_1.Command {
+    constructor(commandId, userId, packId, dogs) {
         super(commandId);
         this.userId = userId;
-        this.inviteId = inviteId;
+        this.packId = packId;
         this.dogs = dogs;
     }
 }
-exports.JoinPackByInviteCommand = JoinPackByInviteCommand;
-class JoinPackByInviteCommandHandler extends cqrs_1.CommandHandler {
+exports.CreateAddDogsToPackCommand = CreateAddDogsToPackCommand;
+class CreateAddDogsToPackCommandHandler extends cqrs_1.CommandHandler {
     handle(command) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const pack = yield packs_1.getPackByInvite(command.inviteId);
-                const members = [
-                    [command.userId, pack_1.PackMemberType.Human, pack_1.PackMemberRank.Member],
-                    ...command.dogs.map((dogId) => ([dogId, pack_1.PackMemberType.Dog, pack_1.PackMemberRank.Member]))
-                ];
-                pack.addMembers(members);
+                const pack = yield packs_1.getPackByIdService(command.packId);
+                if (pack.members.get(command.userId)) {
+                    const membersToAdd = command.dogs.map(dog => [dog, pack_1.PackMemberType.Dog, pack_1.PackMemberRank.Member]);
+                    pack.addMembers(membersToAdd);
+                }
+                else {
+                    throw new Error('Not a member.');
+                }
                 yield packs_1.updatePackService(pack);
                 bus_1.bus.publish({
-                    type: exports.joinedPackByInviteEvent.eventType + command.id,
+                    type: exports.dogsAddedToPackEvent.eventType + command.id,
                     payload: { packId: pack.id }
                 });
             }
@@ -46,5 +48,5 @@ class JoinPackByInviteCommandHandler extends cqrs_1.CommandHandler {
         });
     }
 }
-exports.JoinPackByInviteCommandHandler = JoinPackByInviteCommandHandler;
-//# sourceMappingURL=joinPackByInviteCommand.js.map
+exports.CreateAddDogsToPackCommandHandler = CreateAddDogsToPackCommandHandler;
+//# sourceMappingURL=addDogsToPackCommand.js.map

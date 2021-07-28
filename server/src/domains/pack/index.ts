@@ -15,18 +15,21 @@ export enum PackMemberType {
 export class Pack {
   id : string;
   name : string;
-  members : PackMember[];
+  members : Map<string, PackMember>;
 
   constructor(id : string, name : string, members : PackMember[]) {
     this.id = id;
     this.name = name;
-    this.members = members;
+    this.members = members.reduce((membersMap, member) => {
+      membersMap.set(member[0], member);
+      return membersMap;
+    }, new Map<string, PackMember>());
   }
 
-  join (members : PackMember[]) {
-    // members.forEach(member => {
-
-    // })
+  addMembers (members : PackMember[]) {
+    members.forEach(member => {
+      this.members.set(member[0], member);
+    })
   }
 }
 
